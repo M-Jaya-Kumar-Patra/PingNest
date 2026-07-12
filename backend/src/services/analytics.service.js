@@ -4,6 +4,10 @@ import Telemetry from "../models/telemetry.model.js";
 import mongoose from "mongoose";
 
 const validateProjectOwnership = async (projectId, ownerId) => {
+  if (!mongoose.isValidObjectId(projectId)) {
+    throw new ApiError(404, "Project not found");
+  }
+
   const project = await Project.findOne({
     _id: projectId,
     owner: ownerId,

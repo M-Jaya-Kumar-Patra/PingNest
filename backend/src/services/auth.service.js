@@ -5,14 +5,9 @@ import generateTokens from "../utils/generateTokens.js";
 
 // register user
 export const registerUser = async (userData) => {
-
-  console.log("Service reached");
-
   const { name, email, password } = userData;
 
   const existingUser = await User.findOne({ email });
-
-  console.log("Checked existing user");
 
   if (existingUser) {
     throw new ApiError(
@@ -21,15 +16,11 @@ export const registerUser = async (userData) => {
     );
   }
 
-  console.log("Creating user");
-
   const user = await User.create({
     name,
     email,
     password,
   });
-
-  console.log("User created");
 
   return await User.findById(user._id)
     .select("-password -refreshToken");
@@ -45,7 +36,7 @@ export const loginUser = async (email, password) => {
   if (!user) {
     throw new ApiError(
       401,
-      "Invalid credentials"
+      "Invalid email or password"
     );
   }
 
@@ -54,7 +45,7 @@ export const loginUser = async (email, password) => {
   if (!isPasswordCorrect) {
     throw new ApiError(
       401,
-      "Invalid credentials"
+      "Invalid email or password"
     );
   }
 

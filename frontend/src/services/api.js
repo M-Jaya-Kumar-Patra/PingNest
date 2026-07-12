@@ -1,12 +1,74 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:5000/api/v1",
+
+  timeout: 10000,
 
   withCredentials: true,
 });
 
-let isRefreshing = false;
+let refreshPromise = null;
+let sessionExpiredDispatched = false;
+
+const notifySessionExpired = () => {
+  if (typeof window === "undefined" || sessionExpiredDispatched) {
+    return;
+  }
+
+  sessionExpiredDispatched = true;
+  window.dispatchEvent(new Event("session-expired"));
+};
+
+export const resetSessionExpiredNotice = () => {
+  sessionExpiredDispatched = false;
+};
+
+const refreshAccessToken = async () => {
+  if (!refreshPromise) {
+    refreshPromise = api
+      .post("/auth/refresh-token", null, {
+        skipAuthRefresh: true,
+        skipSessionExpired: true,
+      })
+      .then((response) => {
+        resetSessionExpiredNotice();
+        return response;
+      })
+      .finally(() => {
+        refreshPromise = null;
+      });
+  }
+
+  return refreshPromise;
+};
+
+export const getApiErrorMessage = (
+  error,
+  fallback = "Something went wrong",
+) => {
+  if (!error?.response) {
+    return "Unable to connect to server";
+  }
+
+  return error.response?.data?.message || fallback;
+};
+
+export const isSessionExpiredError = (error) => {
+  if (error?.response?.status !== 401) {
+    return false;
+  }
+
+  const message = error.response?.data?.message || "";
+
+  return (
+    message.toLowerCase().includes("session expired") ||
+    message.toLowerCase().includes("unauthorized") ||
+    message.toLowerCase().includes("access token")
+  );
+};
 
 api.interceptors.response.use(
   (response) => response,
@@ -14,42 +76,30 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    console.log(
-  "INTERCEPTOR",
-  error.response?.status,
-  originalRequest.url
-);
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
 
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !originalRequest.url.includes("/auth/refresh-token") &&
-  !originalRequest.url.includes("/auth/me")
+      !originalRequest.skipAuthRefresh &&
+      !originalRequest.url?.includes("/auth/refresh-token") &&
+      !originalRequest.url?.includes("/auth/login") &&
+      !originalRequest.url?.includes("/auth/register")
     ) {
       originalRequest._retry = true;
 
       try {
-        if (!isRefreshing) {
-          console.log(
-  "TRYING REFRESH"
-);
-          isRefreshing = true;
-
-          await api.post("/auth/refresh-token");
-        }
+        await refreshAccessToken();
 
         return api(originalRequest);
       } catch (refreshError) {
-        console.log(
-  "REFRESH FAILED"
-);
-        console.log("SESSION EXPIRED EVENT FIRED");
-
-        window.dispatchEvent(new Event("session-expired"));
+        if (!originalRequest.skipSessionExpired) {
+          notifySessionExpired();
+        }
 
         return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
       }
     }
 

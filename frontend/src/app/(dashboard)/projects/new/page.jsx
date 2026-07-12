@@ -9,6 +9,7 @@ import Button from "@/components/ui/Button";
 
 import { createProject } from "@/services/project.service";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/services/api";
 
 export default function NewProjectPage() {
   const router = useRouter();
@@ -35,12 +36,11 @@ export default function NewProjectPage() {
       setLoading(true);
 
       const res = await createProject(formData);
-      toast.success("Project created");
+      toast.success(res.data.message || "Project created successfully");
 
       router.push(`/projects/${res.data.data._id}`);
     } catch (error) {
-      console.error(error);
-      toast.error(error?.response?.data?.message || "Failed to create project");
+      toast.error(getApiErrorMessage(error, "Failed to create project"));
     } finally {
       setLoading(false);
     }

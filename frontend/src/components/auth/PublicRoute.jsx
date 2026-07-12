@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import useAuth from "@/hooks/useAuth";
+import Loader from "@/components/ui/Loader";
 
 export default function PublicRoute({ children }) {
   const router = useRouter();
@@ -18,7 +19,7 @@ export default function PublicRoute({ children }) {
   }, [user, loading, router]);
 
   if (loading) {
-    return null;
+    return <Loader />;
   }
 
   return children;

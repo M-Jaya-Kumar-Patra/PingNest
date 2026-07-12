@@ -1,6 +1,13 @@
 import Project from "../models/project.model.js";
 import ApiError from "../utils/ApiError.js";
 import generateApiKey from "../utils/generateApiKey.js";
+import mongoose from "mongoose";
+
+const assertValidProjectId = (projectId) => {
+  if (!mongoose.isValidObjectId(projectId)) {
+    throw new ApiError(404, "Project not found");
+  }
+};
 
 export const createProject = async (ownerId, projectData) => {
   const project = await Project.create({
@@ -21,6 +28,8 @@ export const getProjects = async (ownerId) => {
 };
 
 export const getProjectById = async (projectId, ownerId) => {
+  assertValidProjectId(projectId);
+
   const project = await Project.findOne({
     _id: projectId,
     owner: ownerId,
@@ -34,6 +43,8 @@ export const getProjectById = async (projectId, ownerId) => {
 };
 
 export const deleteProject = async (projectId, ownerId) => {
+  assertValidProjectId(projectId);
+
   const project = await Project.findOneAndDelete({
     _id: projectId,
     owner: ownerId,
@@ -47,6 +58,8 @@ export const deleteProject = async (projectId, ownerId) => {
 };
 
 export const regenerateApiKey = async (projectId, ownerId) => {
+  assertValidProjectId(projectId);
+
   const project = await Project.findOne({
     _id: projectId,
     owner: ownerId,
@@ -64,6 +77,8 @@ export const regenerateApiKey = async (projectId, ownerId) => {
 };
 
 export const updateProject = async (projectId, ownerId, updateData) => {
+  assertValidProjectId(projectId);
+
   const project = await Project.findOneAndUpdate(
     {
       _id: projectId,

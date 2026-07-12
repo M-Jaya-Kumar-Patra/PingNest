@@ -50,7 +50,7 @@ userSchema.methods.generateAccessToken = function (){
         },
         env.jwtAccessSecret,
         {
-            expiresIn: "20s"
+            expiresIn: env.jwtAccessExpiresIn
         }
     );
 }
@@ -62,7 +62,7 @@ userSchema.methods.generateRefreshToken = function () {
         }, 
         env.jwtRefreshSecret,
         {
-            expiresIn: "50s"
+            expiresIn: env.jwtRefreshExpiresIn
         }
     );
 }

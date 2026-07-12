@@ -1,5 +1,7 @@
+import scrollbarHide from "tailwind-scrollbar-hide";
+
 /** @type {import('tailwindcss').Config} */
-export default {
+const tailwindConfig = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,21 +14,19 @@ export default {
         foreground: "var(--foreground)",
       },
       screens: {
-        'iphone12': '390px',
-        'mdlg': '1552px', 
+        iphone12: "390px",
+        mdlg: "1552px",
       },
       backgroundImage: {
-        'primary-gradient': 'linear-gradient(to left, #1e293b, #0f172a)', // blue-600 → indigo-800
+        "primary-gradient": "linear-gradient(to left, #1e293b, #0f172a)",
       },
       fontFamily: {
         heading: ["var(--font-heading)", "sans-serif"],
         body: ["var(--font-body)", "sans-serif"],
       },
-      
     },
   },
-  plugins: [
-    require('tailwind-scrollbar-hide')
-  ]
-  
+  plugins: [scrollbarHide],
 };
+
+export default tailwindConfig;

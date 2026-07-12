@@ -1,17 +1,21 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import useAuth from "@/hooks/useAuth";
 import { loginUser } from "@/services/auth.service";
+import { getApiErrorMessage } from "@/services/api";
 
 export default function LoginPage() {
   const router = useRouter();
 
   const { refreshUser } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -21,13 +25,18 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     try {
+      setLoading(true);
+
       await loginUser(data);
 
       await refreshUser();
 
-      router.push("/dashboard");
+      toast.success("Login successful");
+      router.replace("/dashboard");
     } catch (error) {
-      console.error(error);
+      toast.error(getApiErrorMessage(error, "Invalid email or password"));
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,12 +85,16 @@ export default function LoginPage() {
             type="password"
             {...register("password", {
               required: "Password is required",
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters",
+              },
             })}
             error={errors.password?.message}
           />
 
-          <Button type="submit" className="w-full">
-            Login
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
           </Button>
         </form>
       </div>

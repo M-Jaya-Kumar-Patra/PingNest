@@ -1,15 +1,24 @@
 import Card from "@/components/ui/Card";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Copy,
   Check,
 } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function QuickStartCard({
   apiKey,
 }) {
-    const [copied, setCopied] = useState(false);
     const [copiedItem, setCopiedItem] = useState(false);
+    const copyTimeoutRef = useRef(null);
+
+    useEffect(() => {
+      return () => {
+        if (copyTimeoutRef.current) {
+          clearTimeout(copyTimeoutRef.current);
+        }
+      };
+    }, []);
 
 
     const installCommand =
@@ -37,13 +46,16 @@ app.use(
 
     setCopiedItem(type);
 
-    setTimeout(() => {
+    if (copyTimeoutRef.current) {
+      clearTimeout(copyTimeoutRef.current);
+    }
+
+    copyTimeoutRef.current = setTimeout(() => {
       setCopiedItem(null);
     }, 2000);
 
-  } catch (error) {
-
-    console.error(error);
+  } catch {
+    toast.error("Failed to copy");
 
   }
 };

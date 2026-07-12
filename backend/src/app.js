@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 
 import errorHandler from "./middlewares/errorHandler.js";
 import ApiError from "./utils/ApiError.js";
+import { env } from "./config/env.js";
 
 //routes
 import authRoutes from "./routes/auth.routes.js";
@@ -19,7 +20,13 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: true,
+    origin(origin, callback) {
+      if (!origin || env.corsOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new ApiError(403, "Origin not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
@@ -44,8 +51,6 @@ app.use("/api/v1/dashboard", dashboardRoutes);
 
 
 app.use((req, res, next) => {
-  console.log("404 middleware hit:", req.originalUrl);
-
   next(new ApiError(404, `Route not found: ${req.originalUrl}`));
 });
 

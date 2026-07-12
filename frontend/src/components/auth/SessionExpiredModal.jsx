@@ -34,7 +34,9 @@ export default function SessionExpiredModal({ open, onLogin }) {
           Session Expired
         </h2>
 
-        <p className="text-gray-500">Please login again to continue.</p>
+        <p className="text-gray-500">
+          Session expired. Please login again.
+        </p>
 
         <button
           onClick={onLogin}

@@ -6,8 +6,13 @@ export const loginUser = (data) =>
 export const registerUser = (data) =>
   api.post("/auth/register", data);
 
-export const getCurrentUser = () =>
-  api.get("/auth/me");
+export const getCurrentUser = ({ silent = false } = {}) =>
+  api.get("/auth/me", {
+    skipSessionExpired: silent,
+  });
     
 export const logoutUser = () =>
-  api.post("/auth/logout");
+  api.post("/auth/logout", null, {
+    skipAuthRefresh: true,
+    skipSessionExpired: true,
+  });

@@ -5,19 +5,24 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import useAuth from "@/hooks/useAuth";
+import Loader from "@/components/ui/Loader";
 
 export default function ProtectedRoute({ children }) {
   const router = useRouter();
 
-  const { user, loading } = useAuth();
+  const { user, loading, sessionExpired } = useAuth();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!loading && !user && !sessionExpired) {
       router.replace("/login");
     }
-  }, [user, loading, router]);
+  }, [user, loading, sessionExpired, router]);
 
-  if (loading || !user) {
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (!user) {
     return null;
   }
 
