@@ -5,7 +5,7 @@ let socket = null;
 export const getSocket = () => {
   if (!socket) {
     socket = io(
-      "https://pingnest-m2jh.onrender.com"
+      process.env.NEXT_PUBLIC_SOCKET_URL
     );
   }
 
