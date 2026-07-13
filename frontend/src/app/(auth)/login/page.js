@@ -38,14 +38,13 @@ export default function LoginPage() {
       setAuthError("");
 
       await loginUser(data);
+console.log("LOGIN SUCCESS");
 
-      await refreshUser();
+await refreshUser();
+console.log("REFRESH SUCCESS");
 
-      toast.success(
-        "Login successful"
-      );
-
-      router.push("/dashboard");
+router.push("/dashboard");
+console.log("PUSHED DASHBOARD");
 
     } catch (error) {
 

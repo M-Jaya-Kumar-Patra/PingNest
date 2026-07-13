@@ -61,14 +61,25 @@ export function AuthProvider({ children }) {
   }, []);
 
   const refreshUser = async () => {
-    try {
-      const res = await getCurrentUser();
+  try {
+    console.log("REFRESH USER START");
 
-      setUser(res.data.data);
-    } catch (error) {
-      setUser(null);
-    }
-  };
+    const res = await getCurrentUser();
+
+    console.log(
+      "CURRENT USER:",
+      res.data.data
+    );
+
+    setUser(res.data.data);
+
+    console.log("USER SET");
+  } catch (error) {
+    console.log("REFRESH USER FAILED", error);
+
+    setUser(null);
+  }
+};
 
   return (
     <AuthContext.Provider
