@@ -50,10 +50,10 @@ export const registerUser =
       otp
     );
 
-    await sendOtpEmail(
-      email,
-      otp
-    );
+    // await sendOtpEmail(
+    //   email,
+    //   otp
+    // );
 
     const user =
       await User.create({
@@ -61,8 +61,8 @@ export const registerUser =
         email,
         password,
 
-        verificationOtp:
-          otp,
+        // verificationOtp:
+        //   otp,
 
         verificationOtpExpiresAt:
           new Date(
@@ -114,12 +114,12 @@ export const loginUser = async (email, password) => {
     );
   }
 
-  if (!user.isVerified) {
-  throw new ApiError(
-    403,
-    "Please verify your email first"
-  );
-}
+  // if (!user.isVerified) {
+  // throw new ApiError(
+  //   403,
+  //   "Please verify your email first"
+  // );
+// }
 
   const isPasswordCorrect = await user.comparePassword(password);
 

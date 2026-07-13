@@ -54,13 +54,15 @@ export default function RegisterPage() {
 
       const response = await registerUser(payload);
 
-console.log(response);
+// console.log(response);
 
-toast.success("Email sent");
+// toast.success("Email sent");
 
-router.push(
-  `/verify-email?email=${payload.email}`
-);
+// router.push(
+//   `/verify-email?email=${payload.email}`
+// );
+
+router.push("/login")
 
     } catch (error) {
 
