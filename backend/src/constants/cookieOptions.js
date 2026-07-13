@@ -1,17 +1,17 @@
-import { env } from "../config/env.js"
+import { env } from "../config/env.js";
 
 export const cookieOptions = {
-    httpOnly: true,
-    secure: env.nodeEnv == "production",
-    sameSite: "strict"
-}
-
-const accessCookieOptions = {
-  ...cookieOptions,
-  maxAge: 15 * 60 * 1000,
+  httpOnly: true,
+  secure: env.nodeEnv === "production",
+  sameSite: "strict",
 };
 
-const refreshCookieOptions = {
+export const accessCookieOptions = {
   ...cookieOptions,
-  maxAge: 7 * 24 * 60 * 50 * 1000,
+  maxAge: 10 * 1000,
+};
+
+export const refreshCookieOptions = {
+  ...cookieOptions,
+  maxAge: 20 * 1000,
 };

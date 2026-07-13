@@ -21,5 +21,5 @@ export const loginSchema = z.object({
 
     password: z
       .string()
-      .min(6)
+      .min(6, "Invalid password"),
 })

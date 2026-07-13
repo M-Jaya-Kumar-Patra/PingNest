@@ -2,7 +2,6 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-
   withCredentials: true,
 });
 
@@ -14,36 +13,27 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    console.log(
-  "INTERCEPTOR",
-  error.response?.status,
-  originalRequest.url
-);
-
     if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      !originalRequest.url.includes("/auth/refresh-token") &&
-  !originalRequest.url.includes("/auth/me")
-    ) {
+  error.response?.status === 401 &&
+  !originalRequest?._retry &&
+  !originalRequest?.url?.includes("/auth/refresh-token") &&
+  !originalRequest?.url?.includes("/auth/login") &&
+  !originalRequest?.url?.includes("/auth/register")
+) {
       originalRequest._retry = true;
 
       try {
         if (!isRefreshing) {
-          console.log(
-  "TRYING REFRESH"
-);
           isRefreshing = true;
 
           await api.post("/auth/refresh-token");
+
+          isRefreshing = false;
         }
 
         return api(originalRequest);
       } catch (refreshError) {
-        console.log(
-  "REFRESH FAILED"
-);
-        console.log("SESSION EXPIRED EVENT FIRED");
+        isRefreshing = false;
 
         window.dispatchEvent(new Event("session-expired"));
 
@@ -58,3 +48,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+

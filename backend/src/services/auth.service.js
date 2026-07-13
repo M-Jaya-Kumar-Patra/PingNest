@@ -1,39 +1,61 @@
 import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import generateTokens from "../utils/generateTokens.js";
+import generateOtp from "../utils/generateOtp.js";
+import { sendOtpEmail } from "./mail.service.js";
 
 
-// register user
-export const registerUser = async (userData) => {
 
-  console.log("Service reached");
+export const registerUser =
+  async (userData) => {
 
-  const { name, email, password } = userData;
+    const {
+      name,
+      email,
+      password,
+    } = userData;
 
-  const existingUser = await User.findOne({ email });
+    const existingUser =
+      await User.findOne({
+        email,
+      });
 
-  console.log("Checked existing user");
+    if (existingUser) {
+      throw new ApiError(
+        409,
+        "Email already registered"
+      );
+    }
 
-  if (existingUser) {
-    throw new ApiError(
-      409,
-      "Email already registered"
+    const otp =
+      generateOtp();
+
+    const user =
+      await User.create({
+        name,
+        email,
+        password,
+
+        verificationOtp:
+          otp,
+
+        verificationOtpExpiresAt:
+          new Date(
+            Date.now() +
+            10 * 60 * 1000
+          ),
+      });
+
+    await sendOtpEmail(
+      email,
+      otp
     );
-  }
 
-  console.log("Creating user");
-
-  const user = await User.create({
-    name,
-    email,
-    password,
-  });
-
-  console.log("User created");
-
-  return await User.findById(user._id)
-    .select("-password -refreshToken");
-};
+    return await User.findById(user._id)
+  .select(
+    "-password -refreshToken -verificationOtp"
+  );
+  };
 
 
 
@@ -48,6 +70,13 @@ export const loginUser = async (email, password) => {
       "Invalid credentials"
     );
   }
+
+  if (!user.isVerified) {
+  throw new ApiError(
+    403,
+    "Please verify your email first"
+  );
+}
 
   const isPasswordCorrect = await user.comparePassword(password);
 
@@ -85,3 +114,232 @@ export const logoutUser = async(userId) => {
 
 
 
+
+
+
+export const resendVerificationOtp =
+  async (email) => {
+
+    const user =
+      await User.findOne({
+        email,
+      });
+
+    if (!user) {
+      throw new ApiError(
+        404,
+        "User not found"
+      );
+    }
+
+    if (user.isVerified) {
+      throw new ApiError(
+        400,
+        "Email already verified"
+      );
+    }
+
+    const otp =
+      generateOtp();
+
+    user.verificationOtp =
+      otp;
+
+    user.verificationOtpExpiresAt =
+      new Date(
+        Date.now() +
+          10 * 60 * 1000
+      );
+
+    await user.save();
+
+    await sendOtpEmail(
+      email,
+      otp
+    );
+
+    return true;
+  };
+
+
+
+  
+
+export const forgotPassword =
+  async (email) => {
+
+    const user =
+      await User.findOne({
+        email,
+      });
+
+    if (!user) {
+      throw new ApiError(
+        404,
+        "User not found"
+      );
+    }
+
+    const otp =
+      generateOtp();
+
+    user.passwordResetOtp =
+      otp;
+
+    user.passwordResetOtpExpiresAt =
+      new Date(
+        Date.now() +
+        10 * 60 * 1000
+      );
+
+    await user.save();
+
+    await sendOtpEmail(
+      email,
+      otp
+    );
+
+    return true;
+  };
+
+  export const resetPassword =
+  async (
+    email,
+    otp,
+    password
+  ) => {
+
+    const user =
+      await User.findOne({
+        email,
+      });
+
+    if (!user) {
+      throw new ApiError(
+        404,
+        "User not found"
+      );
+    }
+
+    if (
+      user.passwordResetOtp !==
+      otp
+    ) {
+      throw new ApiError(
+        400,
+        "Invalid OTP"
+      );
+    }
+
+    if (
+      user.passwordResetOtpExpiresAt <
+      new Date()
+    ) {
+      throw new ApiError(
+        400,
+        "OTP expired"
+      );
+    }
+
+    user.password = password;
+
+    user.passwordResetOtp =
+      null;
+
+    user.passwordResetOtpExpiresAt =
+      null;
+
+    await user.save();
+
+    return true;
+  };
+
+
+
+
+export const changeUserPassword =
+  async (
+    userId,
+    currentPassword,
+    newPassword
+  ) => {
+
+    const user =
+      await User.findById(userId);
+
+    const isValid =
+      await user.comparePassword(
+        currentPassword
+      );
+
+    if (!isValid) {
+      throw new ApiError(
+        400,
+        "Current password is incorrect"
+      );
+    }
+
+    user.password =
+      newPassword;
+
+    user.refreshToken =
+      null;
+
+    await user.save();
+
+    return true;
+  };
+
+
+export const deleteUserAccount =
+  async (userId, password) => {
+
+    const user =
+      await User.findById(userId);
+
+    if (!user) {
+      throw new ApiError(
+        404,
+        "User not found"
+      );
+    }
+
+    const isValid =
+      await user.comparePassword(
+        password
+      );
+
+    if (!isValid) {
+      throw new ApiError(
+        400,
+        "Invalid password"
+      );
+    }
+
+    const projects =
+      await Project.find({
+        owner: userId,
+      }).select("_id");
+
+    const projectIds =
+      projects.map(
+        (project) =>
+          project._id
+      );
+
+    await Telemetry.deleteMany({
+      project: {
+        $in: projectIds,
+      },
+    });
+
+    await Project.deleteMany({
+      owner: userId,
+    });
+
+    await User.findByIdAndDelete(
+      userId
+    );
+
+    return true;
+  };

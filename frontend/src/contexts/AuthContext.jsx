@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+
 import { getCurrentUser } from "@/services/auth.service";
-import SessionExpiredModal from "@/components/auth/SessionExpiredModal";
 
 const AuthContext = createContext();
 
@@ -10,44 +10,47 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
   const [loading, setLoading] = useState(true);
-  const [sessionExpired, setSessionExpired] = useState(false);
 
+  // Initial auth check
   useEffect(() => {
+    const publicRoutes = ["/login", "/register"];
+
+    if (publicRoutes.includes(window.location.pathname)) {
+      setLoading(false);
+      return;
+    }
+
     const loadUser = async () => {
       try {
         const res = await getCurrentUser();
 
         setUser(res.data.data);
       } catch (error) {
-
-  if (
-    error.response?.status !== 401
-  ) {
-    console.error(error);
-  }
-
-  setUser(null);
-} finally {
+        setUser(null);
+      } finally {
         setLoading(false);
       }
     };
 
-      console.log("User:", user);
-    
-
     loadUser();
   }, []);
 
+  // Session expired listener
   useEffect(() => {
     const handleSessionExpired = () => {
-
-  console.log(
-    "SESSION EXPIRED RECEIVED"
-  );
+  console.log("SESSION EXPIRED");
 
   setUser(null);
-  setSessionExpired(true);
 
+  localStorage.clear();
+  sessionStorage.clear();
+
+  if (
+    window.location.pathname !== "/login" &&
+    window.location.pathname !== "/register"
+  ) {
+    window.location.replace("/login");
+  }
 };
 
     window.addEventListener("session-expired", handleSessionExpired);
@@ -63,8 +66,6 @@ export function AuthProvider({ children }) {
 
       setUser(res.data.data);
     } catch (error) {
-      console.error("Auth check failed:", error.response?.data);
-
       setUser(null);
     }
   };
@@ -79,12 +80,6 @@ export function AuthProvider({ children }) {
       }}
     >
       {children}
-      <SessionExpiredModal
-        open={sessionExpired}
-        onLogin={() => {
-          window.location.href = "/login";
-        }}
-      />
     </AuthContext.Provider>
   );
 }
