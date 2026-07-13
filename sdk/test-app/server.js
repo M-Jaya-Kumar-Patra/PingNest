@@ -12,7 +12,7 @@ app.use(
 
 
     endpoint:
-      "http://localhost:5000/api/v1/telemetry/ingest",
+      "https://pingnest-m2jh.onrender.com/api/v1/telemetry/ingest",
   })
 );
 

@@ -5,7 +5,7 @@ let socket = null;
 export const getSocket = () => {
   if (!socket) {
     socket = io(
-      "http://localhost:5000"
+      "https://pingnest-m2jh.onrender.com"
     );
   }
 
