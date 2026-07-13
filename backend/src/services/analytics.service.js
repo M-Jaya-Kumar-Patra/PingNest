@@ -173,7 +173,7 @@ export const getRequestsTimeline = async (projectId, ownerId) => {
     },
     {
       $sort: {
-        "_id.hour": 1,
+        "_id.time": 1,
       },
     },
   ]);
