@@ -159,7 +159,10 @@ export const getRequestsTimeline = async (projectId, ownerId) => {
       $group: {
         _id: {
           hour: {
-            $hour: "$createdAt",
+            $hour: {
+              date: "$createdAt",
+              timezone: "Asia/Kolkata",
+            },
           },
         },
 
