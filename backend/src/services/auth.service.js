@@ -50,6 +50,11 @@ export const registerUser =
       otp
     );
 
+    await sendOtpEmail(
+      email,
+      otp
+    );
+
     const user =
       await User.create({
         name,
@@ -75,10 +80,7 @@ export const registerUser =
       "STEP 7 - Sending email"
     );
 
-    await sendOtpEmail(
-      email,
-      otp
-    );
+    
 
     console.log(
       "STEP 8 - Email sent successfully"

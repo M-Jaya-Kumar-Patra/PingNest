@@ -1,12 +1,13 @@
 import nodemailer from "nodemailer";
+import { env } from "../config/env";
 
 export const transporter =
   nodemailer.createTransport({
     service: "gmail",
 
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: env.EMAIL_USER,
+      pass: env.EMAIL_PASS,
     },
   });
 
@@ -24,7 +25,7 @@ export const sendOtpEmail = async (
 
   const info =
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: env.EMAIL_USER,
       to: email,
       subject: "PingNest Verification OTP",
       html: `<h1>${otp}</h1>`,
