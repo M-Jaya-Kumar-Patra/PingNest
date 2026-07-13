@@ -1,15 +1,33 @@
 {
-  "name": "pingnest-sdk",
+  "name": "pingnest",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "description": "Plug-and-play API monitoring and telemetry SDK for Express.js applications",
+  "main": "./src/index.js",
   "type": "module",
+  "keywords": [
+    "pingnest",
+    "monitoring",
+    "telemetry",
+    "observability",
+    "apm",
+    "analytics",
+    "express",
+    "expressjs",
+    "nodejs",
+    "middleware",
+    "api-monitoring",
+    "performance"
+  ],
+  "author": "M Jaya Kumar Patra",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/M-Jaya-Kumar-Patra/PingNest.git"
+  },
+  "bugs": {
+    "url": "https://github.com/M-Jaya-Kumar-Patra/PingNest/issues"
+  },
+  "homepage": "https://github.com/M-Jaya-Kumar-Patra/PingNest#readme",
   "dependencies": {
     "axios": "^1.18.1"
   }

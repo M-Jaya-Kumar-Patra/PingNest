@@ -16,10 +16,10 @@ const pingNest = (options) => {
   }
 
   return (req, res, next) => {
-    const start = Date.now();
+    const start = performance.now();
 
     res.on("finish", () => {
-      const responseTime = Date.now() - start;
+      const responseTime = Math.round(performance.now() - start);
 
       const shouldIgnore = config.ignoreRoutes.some((route) =>
         req.originalUrl.startsWith(route),
