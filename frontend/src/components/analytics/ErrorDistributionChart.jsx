@@ -1,11 +1,14 @@
 "use client";
 
+import Card from "@/components/ui/Card";
+
 import {
   ResponsiveContainer,
   PieChart,
   Pie,
   Tooltip,
   Cell,
+  Legend,
 } from "recharts";
 
 export default function ErrorDistributionChart({
@@ -19,48 +22,125 @@ export default function ErrorDistributionChart({
   );
 
   const colors = [
-    "#ef4444",
-    "#f97316",
-    "#eab308",
-    "#8b5cf6",
+    "#ef4444", // red
+    "#f97316", // orange
+    "#f59e0b", // amber
+    "#8b5cf6", // purple
+    "#06b6d4", // cyan
   ];
 
+  if (!chartData.length) {
+    return (
+      <Card>
+        <h2
+          className="
+          text-lg
+          font-semibold
+          text-white
+          mb-4
+          "
+        >
+          Error Distribution
+        </h2>
+
+        <div
+          className="
+          h-[300px]
+
+          flex
+          items-center
+          justify-center
+
+          text-slate-500
+          "
+        >
+          No error data available
+        </div>
+      </Card>
+    );
+  }
+
   return (
-    <div className="bg-white p-4 rounded-xl shadow">
-      <h2 className="font-semibold mb-4">
-        Error Distribution
-      </h2>
+    <Card>
+      <div
+        className="
+        flex
+        items-center
+        justify-between
 
-      <ResponsiveContainer
-        width="100%"
-        height={300}
+        mb-5
+        "
       >
-        <PieChart>
-          <Pie
-            data={chartData}
-            dataKey="count"
-            nameKey="code"
-            outerRadius={100}
-            label
+        <div>
+          <h2
+            className="
+            text-lg
+            font-semibold
+            text-white
+            "
           >
-            {chartData.map(
-              (_, index) => (
-                <Cell
-                  key={index}
-                  fill={
-                    colors[
-                      index %
-                        colors.length
-                    ]
-                  }
-                />
-              )
-            )}
-          </Pie>
+            Error Distribution
+          </h2>
 
-          <Tooltip />
-        </PieChart>
-      </ResponsiveContainer>
-    </div>
+          <p
+            className="
+            text-sm
+            text-slate-400
+            mt-1
+            "
+          >
+            Breakdown of failed requests
+            by status code.
+          </p>
+        </div>
+      </div>
+
+      <div className="h-[320px]">
+        <ResponsiveContainer
+          width="100%"
+          height="100%"
+        >
+          <PieChart>
+            <Pie
+              data={chartData}
+              dataKey="count"
+              nameKey="code"
+              outerRadius={110}
+              innerRadius={55}
+              paddingAngle={3}
+              label
+            >
+              {chartData.map(
+                (_, index) => (
+                  <Cell
+                    key={index}
+                    fill={
+                      colors[
+                        index %
+                          colors.length
+                      ]
+                    }
+                  />
+                )
+              )}
+            </Pie>
+
+            <Tooltip
+              contentStyle={{
+                background:
+                  "#0f172a",
+                border:
+                  "1px solid #334155",
+                borderRadius:
+                  "12px",
+                color: "#fff",
+              }}
+            />
+
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+    </Card>
   );
 }

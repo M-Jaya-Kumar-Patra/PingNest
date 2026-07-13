@@ -219,11 +219,82 @@ export default function ProjectDetailPage() {
   }
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">{project.name}</h1>
+      <div
+  className="
+  relative
 
-        <p className="text-gray-500">{project.description}</p>
-      </div>
+  overflow-hidden
+
+  rounded-3xl
+
+  border
+  border-slate-800
+
+  bg-gradient-to-br
+  from-slate-900
+  via-slate-950
+  to-slate-950
+
+  p-6
+  md:p-8
+  "
+>
+  <div
+    className="
+    absolute
+
+    top-0
+    right-0
+
+    h-48
+    w-48
+
+    rounded-full
+
+    bg-orange-500/10
+
+    blur-3xl
+    "
+  />
+
+  <div className="relative">
+    <p
+      className="
+      text-sm
+      font-medium
+
+      text-orange-400
+      "
+    >
+      Project Dashboard
+    </p>
+
+    <h1
+      className="
+      mt-2
+
+      text-3xl
+      md:text-4xl
+
+      font-bold
+
+      text-white
+      "
+    >
+      {project.name}
+    </h1>
+
+    <p
+      className="
+      mt-3
+
+      text-slate-400
+      "
+    >
+      {project.description}
+    </p>
+  </div>
+</div>  
 
       <div className="grid md:grid-cols-4 gap-4">
         <StatCard title="Total Requests" value={summary.totalRequests} />
@@ -245,61 +316,117 @@ export default function ProjectDetailPage() {
       </div>
 
       <Card>
-        <div
-          className="
+  <div
+    className="
     flex
-    items-center
-    justify-between
-    mb-3
-  "
-        >
-          <h2
-            className="
-      text-lg
-      font-semibold
-      "
-          >
-            API Key
-          </h2>
+    flex-col
+    gap-4
 
-          <div className="flex gap-2">
-            <button
-              onClick={handleCopyApiKey}
-              className="flex items-center gap-2"
-            >
-              {copied ? (
-                <>
-                  <Check size={16} />
-                  Copied
-                </>
-              ) : (
-                <>
-                  <Copy size={16} />
-                  Copy
-                </>
-              )}
-            </button>
-
-            <button onClick={handleRegenerateApiKey} disabled={regenerating}>
-              {regenerating ? "Generating..." : "Regenerate"}
-            </button>
-          </div>
-        </div>
-
-        <code
-          className="
-    text-sm
-    break-all
-    block
+    md:flex-row
+    md:items-center
+    md:justify-between
     "
-        >
-          {project.apiKey}
-        </code>
-      </Card>
+  >
+    <div>
+      <h2
+        className="
+        text-lg
+        font-semibold
+
+        text-white
+        "
+      >
+        API Key
+      </h2>
+
+      <p
+        className="
+        mt-1
+
+        text-sm
+
+        text-slate-400
+        "
+      >
+        Use this key to connect your SDK.
+      </p>
+    </div>
+
+    <div className="flex gap-2">
+      <button
+        onClick={handleCopyApiKey}
+        className="
+        rounded-xl
+
+        border
+        border-slate-700
+
+        px-4
+        py-2
+
+        text-slate-300
+
+        hover:border-orange-500
+        hover:text-orange-400
+        "
+      >
+        {copied ? "Copied" : "Copy"}
+      </button>
+
+      <button
+        onClick={handleRegenerateApiKey}
+        disabled={regenerating}
+        className="
+        rounded-xl
+
+        bg-orange-500
+
+        px-4
+        py-2
+
+        text-white
+
+        hover:bg-orange-400
+        "
+      >
+        {regenerating
+          ? "Generating..."
+          : "Regenerate"}
+      </button>
+    </div>
+  </div>
+
+  <div
+    className="
+    mt-5
+
+    rounded-2xl
+
+    border
+    border-slate-800
+
+    bg-slate-950
+
+    p-4
+    "
+  >
+    <code
+      className="
+      break-all
+
+      text-sm
+
+      text-orange-400
+      "
+    >
+      {project.apiKey}
+    </code>
+  </div>
+</Card>
 
       {requests.length === 0 ? (
 
-  <Card>
+<Card className="text-center py-10">
 
     <h2
       className="
@@ -313,7 +440,7 @@ export default function ProjectDetailPage() {
 
     <p
       className="
-      text-gray-500
+      text-slate-400
       "
     >
       Copy your API key,
@@ -353,38 +480,60 @@ export default function ProjectDetailPage() {
 
 )}
       <Card>
-        <h2
-          className="
-    text-red-600
-    font-semibold
-    mb-2
-    "
-        >
-          Danger Zone
-        </h2>
+  <div
+    className="
+    flex
+    flex-col
 
-        <p
-          className="
-    text-gray-500
-    mb-4
-    "
-        >
-          This action cannot be undone.
-        </p>
+    gap-4
 
-        <button
-          onClick={handleDeleteProject}
-          className="
-    bg-red-600
-    text-white
-    px-4
-    py-2
-    rounded
+    md:flex-row
+    md:items-center
+    md:justify-between
     "
-        >
-          Delete Project
-        </button>
-      </Card>
+  >
+    <div>
+      <h2
+        className="
+        text-lg
+        font-semibold
+
+        text-red-400
+        "
+      >
+        Danger Zone
+      </h2>
+
+      <p
+        className="
+        mt-1
+
+        text-slate-400
+        "
+      >
+        Permanently delete this project and all telemetry data.
+      </p>
+    </div>
+
+    <button
+      onClick={handleDeleteProject}
+      className="
+      rounded-xl
+
+      bg-red-600
+
+      px-5
+      py-2.5
+
+      text-white
+
+      hover:bg-red-500
+      "
+    >
+      Delete Project
+    </button>
+  </div>
+</Card>
     </div>
   );
 }

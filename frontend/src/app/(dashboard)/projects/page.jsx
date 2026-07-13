@@ -5,16 +5,24 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import {
+  FolderKanban,
+  Plus,
+} from "lucide-react";
+
+import {
   getProjects,
   deleteProject,
 } from "@/services/project.service";
 
 import ProjectCard from "@/components/projects/ProjectCard";
+
 import Loader from "@/components/ui/Loader";
 import Button from "@/components/ui/Button";
+import EmptyState from "@/components/ui/EmptyState";
+import PageHeader from "@/components/ui/PageHeader";
+import SectionHeader from "@/components/ui/SectionHeader";
 
 export default function ProjectsPage() {
-
   const [projects, setProjects] =
     useState([]);
 
@@ -23,26 +31,18 @@ export default function ProjectsPage() {
 
   const loadProjects =
     async () => {
-
       try {
-
         const res =
           await getProjects();
 
         setProjects(
-          res.data.data
+          res.data.data || []
         );
-
       } catch (error) {
-
         console.error(error);
-
       } finally {
-
         setLoading(false);
-
       }
-
     };
 
   useEffect(() => {
@@ -51,129 +51,224 @@ export default function ProjectsPage() {
 
   const handleDelete =
     async (id) => {
-
       try {
-
         await deleteProject(id);
 
-        setProjects(
-          projects.filter(
+        setProjects((prev) =>
+          prev.filter(
             (project) =>
               project._id !== id
           )
         );
-
       } catch (error) {
-
         console.error(error);
-
       }
-
     };
 
   if (loading) {
-    return <Loader />;
+    return (
+      <Loader text="Loading Projects..." />
+    );
   }
 
   return (
-    <div>
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="Projects"
+        title="Project Management"
+        description="Manage monitored services, API telemetry sources, and project configurations."
+        actions={
+          <Link
+            href="/projects/new"
+          >
+            <Button
+              className="
+              gap-2
+              "
+            >
+              <Plus size={16} />
+              New Project
+            </Button>
+          </Link>
+        }
+      />
 
-      <div
+      {/* Hero */}
+
+      <section
         className="
-        flex
-        justify-between
-        items-center
-        mb-6
+        relative
+
+        overflow-hidden
+
+        rounded-3xl
+
+        border
+        border-slate-800
+
+        bg-gradient-to-br
+        from-slate-900
+        via-slate-950
+        to-slate-950
+
+        p-6
+        md:p-8
         "
       >
-
-        <h1
-          className="
-          text-3xl
-          font-bold
-          "
-        >
-          Projects
-        </h1>
-
-        <Link
-          href="/projects/new"
-        >
-          <Button>
-            New Project
-          </Button>
-        </Link>
-
-      </div>
-
-      {projects.length === 0 ? (
-
         <div
           className="
-          text-center
-          py-12
+          absolute
+          top-0
+          right-0
+
+          h-40
+          w-40
+
+          rounded-full
+
+          bg-orange-500/10
+
+          blur-3xl
           "
-        >
+        />
+
+        <div className="relative">
+          <p
+            className="
+            text-sm
+            font-medium
+
+            text-orange-400
+            "
+          >
+            PingNest Projects
+          </p>
 
           <h2
             className="
-            text-2xl
-            font-semibold
-            mb-2
+            mt-2
+
+            text-3xl
+            md:text-4xl
+
+            font-bold
+
+            text-white
             "
           >
-            No Projects Yet
+            Monitor every service.
           </h2>
 
           <p
             className="
-            text-gray-500
-            mb-4
+            mt-3
+
+            max-w-2xl
+
+            text-slate-400
             "
           >
-            Create your first
-            project to start
-            monitoring APIs.
+            Create projects, connect
+            applications, collect
+            telemetry, and track API
+            health from one place.
           </p>
-
-          <Link
-            href="/projects/new"
-          >
-            <Button>
-              Create Project
-            </Button>
-          </Link>
-
         </div>
+      </section>
 
-      ) : (
+      <section className="space-y-4">
+        <SectionHeader
+          title="Your Projects"
+          description="Every project represents a monitored application or service."
+        />
 
-        <div
+        {projects.length === 0 ? (
+          <EmptyState
+            title="No Projects Yet"
+            message="Create your first project and start collecting API telemetry."
+          />
+        ) : (
+          <div
+            className="
+            grid
+
+            gap-5
+
+            md:grid-cols-2
+            xl:grid-cols-3
+            "
+          >
+            {projects.map(
+              (project) => (
+                <ProjectCard
+                  key={project._id}
+                  project={project}
+                  onDelete={
+                    handleDelete
+                  }
+                />
+              )
+            )}
+          </div>
+        )}
+      </section>
+
+      {/* Footer Stats */}
+
+      {projects.length > 0 && (
+        <section
           className="
-          grid
-          md:grid-cols-2
-          gap-4
+          rounded-3xl
+
+          border
+          border-slate-800
+
+          bg-slate-900/50
+
+          p-6
           "
         >
+          <div
+            className="
+            flex
+            items-center
+            gap-3
+            "
+          >
+            <FolderKanban
+              size={20}
+              className="text-orange-400"
+            />
 
-          {projects.map(
-            (project) => (
+            <div>
+              <h3
+                className="
+                font-semibold
+                text-white
+                "
+              >
+                Total Projects
+              </h3>
 
-              <ProjectCard
-                key={project._id}
-                project={project}
-                onDelete={
-                  handleDelete
-                }
-              />
-
-            )
-          )}
-
-        </div>
-
+              <p
+                className="
+                text-sm
+                text-slate-400
+                "
+              >
+                You currently have{" "}
+                {projects.length}
+                {" "}
+                monitored project
+                {projects.length > 1
+                  ? "s"
+                  : ""}
+                .
+              </p>
+            </div>
+          </div>
+        </section>
       )}
-
     </div>
   );
 }

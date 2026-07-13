@@ -2,273 +2,436 @@
 
 import { useEffect, useState } from "react";
 
-import {
-  getDashboardOverview,
-} from "@/services/dashboard.service";
-
-import {
-  getProjects,
-} from "@/services/project.service";
-
-import StatCard from "@/components/ui/StatCard";
 import Card from "@/components/ui/Card";
+import EmptyState from "@/components/ui/EmptyState";
+import LoadingSkeleton from "@/components/ui/LoadingSkeleton";
+import PageHeader from "@/components/ui/PageHeader";
+import SectionHeader from "@/components/ui/SectionHeader";
+import StatCard from "@/components/ui/StatCard";
+import StatusBadge from "@/components/ui/StatusBadge";
+
+import { getDashboardOverview } from "@/services/dashboard.service";
+
+import {
+  Activity,
+  FolderKanban,
+  HeartPulse,
+  Plus,
+  RadioTower,
+} from "lucide-react";
 
 import Link from "next/link";
-import Loader from "@/components/ui/Loader";
 
 export default function DashboardPage() {
-
   const [overview, setOverview] =
     useState(null);
 
   const [projects, setProjects] =
     useState([]);
 
-    const [loading, setLoading] =
-  useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
   useEffect(() => {
+    const loadData = async () => {
+      try {
+        const overviewRes =
+          await getDashboardOverview();
 
-  const loadData = async () => {
+        const overviewData =
+          overviewRes.data.data;
 
-    try {
+        setOverview(overviewData);
 
-      const overviewRes =
-        await getDashboardOverview();
+        setProjects(
+          overviewData.projects || []
+        );
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setOverview(
-        overviewRes.data.data
-      );
+    loadData();
+  }, []);
 
-      setProjects(
-        overviewRes.data.data.projects
-      );
-
-    } catch (error) {
-
-      console.error(error);
-
-    }finally {
-  setLoading(false);
-}
-
-  };
-
-  loadData();
-
-}, []);
-
-
-if (loading) {
-  return <Loader />;
-}
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      <PageHeader
+        eyebrow="PingNest"
+        title="Dashboard"
+        description="Monitor requests, traffic, performance, and service health across all your projects."
+        actions={
+          <Link
+            href="/projects/new"
+            className="
+            inline-flex
+            items-center
+            gap-2
 
-      <div
-  className="
-  flex
-  justify-between
-  items-center
-  "
->
+            rounded-xl
 
-  <h1 className="text-3xl font-bold">
-    Dashboard
-  </h1>
+            bg-orange-500
 
-  <Link
-    href="/projects/new"
-    className="
-    px-4
-    py-2
-    bg-black
-    text-white
-    rounded
-    "
-  >
-    + New Project
-  </Link>
+            px-4
+            py-2.5
 
-</div>  
+            text-sm
+            font-medium
+            text-white
 
-      <div className="grid md:grid-cols-4 gap-4">
+            transition-all
 
-        <StatCard
-          title="Projects"
-          value={
-            overview?.totalProjects || 0
-          }
-        />
+            hover:bg-orange-400
+            hover:shadow-lg
+            hover:shadow-orange-500/20
+            "
+          >
+            <Plus size={16} />
+            New Project
+          </Link>
+        }
+      />
 
-        <StatCard
-          title="Active"
-          value={
-            overview?.activeProjects || 0
-          }
-        />
+      {/* Hero */}
 
-        <StatCard
-          title="Requests"
-          value={
-            overview?.totalRequests || 0
-          }
-        />
-
-        <StatCard
-  title="Health Score"
-  value={`${overview?.averageHealthScore || 0}/100`}
-/>
-
-      </div>
-
-      <Card>
-
-  <h2
-    className="
-    text-xl
-    font-semibold
-    mb-4
-    "
-  >
-    Projects
-  </h2>
-
-  <div className="space-y-3">
-
-    {projects.length === 0 ? (
-
-  <div className="text-center py-12">
-
-    <h3 className="text-xl font-semibold mb-2">
-      No Projects Yet
-    </h3>
-
-    <p className="text-gray-500 mb-4">
-      Create your first project to start monitoring APIs.
-    </p>
-
-    <Link
-      href="/projects/new"
-      className="
-      inline-block
-      px-4
-      py-2
-      bg-black
-      text-white
-      rounded
-      "
-    >
-      Create Project
-    </Link>
-
-  </div>
-
-) : (
-
-  projects.map((project) => (
-
-      <Link
-        key={project._id}
-        href={`/projects/${project._id}`}
+      <section
         className="
-        block
+        relative
+
+        overflow-hidden
+
+        rounded-3xl
+
         border
-        rounded-lg
-        p-4
-        hover:bg-gray-50
+        border-slate-800
+
+        bg-gradient-to-br
+        from-slate-900
+        via-slate-950
+        to-slate-950
+
+        p-6
+        md:p-8
         "
       >
+        <div
+          className="
+          absolute
+
+          top-0
+          right-0
+
+          h-48
+          w-48
+
+          rounded-full
+
+          bg-orange-500/10
+
+          blur-3xl
+          "
+        />
+
+        <div className="relative">
+          <p
+            className="
+            text-sm
+            font-medium
+
+            text-orange-400
+            "
+          >
+            Real-Time Monitoring
+          </p>
+
+          <h2
+            className="
+            mt-2
+
+            text-3xl
+            md:text-4xl
+
+            font-bold
+
+            text-white
+            "
+          >
+            Observe your APIs in real time.
+          </h2>
+
+          <p
+            className="
+            mt-3
+
+            max-w-2xl
+
+            text-slate-400
+            "
+          >
+            Track requests, latency,
+            failures, and health scores
+            from a centralized dashboard.
+          </p>
+        </div>
+      </section>
+
+      {/* Overview */}
+
+      <section className="space-y-4">
+        <SectionHeader
+          title="Overview"
+          description="Portfolio-level metrics across all monitored projects."
+        />
 
         <div
           className="
-          flex
-          justify-between
-          items-start
+          grid
+          gap-4
+
+          sm:grid-cols-2
+          xl:grid-cols-4
           "
         >
+          <StatCard
+            title="Projects"
+            value={
+              overview?.totalProjects || 0
+            }
+            icon={FolderKanban}
+          />
 
-          <div>
+          <StatCard
+            title="Active"
+            value={
+              overview?.activeProjects || 0
+            }
+            icon={RadioTower}
+          />
 
-            <h3
-              className="
-              font-medium
-              text-lg
-              "
-            >
-              {project.name}
-            </h3>
+          <StatCard
+            title="Requests"
+            value={
+              overview?.totalRequests || 0
+            }
+            icon={Activity}
+          />
 
-            <p
-              className="
-              text-sm
-              text-gray-500
-              mt-1
-              "
-            >
-              {project.description}
-            </p>
+          <StatCard
+            title="Health Score"
+            value={`${
+              overview?.averageHealthScore ||
+              0
+            }/100`}
+            icon={HeartPulse}
+          />
+        </div>
+      </section>
 
-          </div>
+      {/* Projects */}
 
-          <div
+      <section className="space-y-4">
+        <SectionHeader
+          title="Projects"
+          description="Inspect telemetry, endpoints, traffic, errors, and health metrics."
+        />
+
+        {projects.length === 0 ? (
+          <EmptyState
+            title="No projects yet"
+            message="Create your first project and start collecting telemetry data."
+          />
+        ) : (
+          <Card
             className="
-            flex
-            flex-col
-            items-end
-            gap-2
+            p-0
+            overflow-hidden
             "
           >
-
-            <span
-              className={`
-                px-2
-                py-1
-                text-xs
-                rounded-full
-                ${
-                  project.status ===
-                  "active"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }
-              `}
-            >
-              {project.status}
-            </span>
-
-            <p
+            <div
               className="
-              text-xs
-              text-gray-500
+              divide-y
+              divide-slate-800
               "
             >
-              Last Request:
-              {" "}
-              {project.lastRequest
-                ? new Date(
-                    project.lastRequest
-                  ).toLocaleString()
-                : "Never"}
-            </p>
+              {projects.map(
+                (project) => (
+                  <Link
+                    key={project._id}
+                    href={`/projects/${project._id}`}
+                    className="
+                    group
+                    block
 
-          </div>
+                    p-5
 
-        </div>
+                    transition-all
 
-      </Link>
+                    hover:bg-slate-900/60
 
-    ))
+                    sm:p-6
+                    "
+                  >
+                    <div
+                      className="
+                      flex
+                      flex-col
+                      gap-4
 
-)}
+                      sm:flex-row
+                      sm:items-start
+                      sm:justify-between
+                      "
+                    >
+                      <div className="min-w-0">
+                        <h3
+                          className="
+                          truncate
 
-  </div>
+                          text-lg
+                          font-semibold
 
-</Card>
+                          text-white
 
+                          transition-colors
 
+                          group-hover:text-orange-400
+                          "
+                        >
+                          {project.name}
+                        </h3>
 
+                        <p
+                          className="
+                          mt-2
+
+                          line-clamp-2
+
+                          text-sm
+                          leading-6
+
+                          text-slate-400
+                          "
+                        >
+                          {project.description ||
+                            "No description provided."}
+                        </p>
+                      </div>
+
+                      <div
+                        className="
+                        flex
+                        shrink-0
+
+                        flex-row
+                        items-center
+                        justify-between
+
+                        gap-3
+
+                        sm:flex-col
+                        sm:items-end
+                        "
+                      >
+                        <StatusBadge
+                          status={
+                            project.status
+                          }
+                        />
+
+                        <p
+                          className="
+                          text-xs
+                          text-slate-500
+                          "
+                        >
+                          Last request:{" "}
+                          {project.lastRequest
+                            ? new Date(
+                                project.lastRequest
+                              ).toLocaleString()
+                            : "Never"}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              )}
+            </div>
+          </Card>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="space-y-3">
+        <LoadingSkeleton
+          rows={1}
+          itemClassName="h-10 w-56"
+        />
+
+        <LoadingSkeleton
+          rows={1}
+          itemClassName="h-5 max-w-2xl"
+        />
+      </div>
+
+      <Card className="h-48" />
+
+      <div
+        className="
+        grid
+        gap-4
+
+        sm:grid-cols-2
+        xl:grid-cols-4
+        "
+      >
+        {Array.from({
+          length: 4,
+        }).map((_, index) => (
+          <Card
+            key={index}
+            className="space-y-5"
+          >
+            <LoadingSkeleton
+              rows={1}
+              itemClassName="h-4 w-24"
+            />
+
+            <LoadingSkeleton
+              rows={1}
+              itemClassName="h-10 w-28"
+            />
+
+            <LoadingSkeleton
+              rows={1}
+              itemClassName="h-4 w-40"
+            />
+          </Card>
+        ))}
+      </div>
+
+      <Card className="space-y-4">
+        <LoadingSkeleton
+          rows={1}
+          itemClassName="h-6 w-40"
+        />
+
+        <LoadingSkeleton
+          rows={4}
+          itemClassName="h-16"
+        />
+      </Card>
     </div>
   );
 }

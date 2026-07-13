@@ -10,6 +10,14 @@ import { verifyEmail, resendOtp } from "@/services/auth.service";
 
 import Button from "@/components/ui/Button";
 
+import {
+  ShieldCheck,
+  Mail,
+  Loader2,
+  RefreshCw,
+} from "lucide-react";
+
+
 export default function VerifyEmailPage() {
   const router = useRouter();
 
@@ -97,131 +105,315 @@ export default function VerifyEmailPage() {
   };
 
   return (
+  <div
+    className="
+    min-h-screen
+    bg-slate-950
+    relative
+    overflow-hidden
+
+    flex
+    items-center
+    justify-center
+
+    px-4
+    py-8
+    "
+  >
+    {/* Background Glow */}
+
     <div
       className="
-      min-h-screen
-      flex
-      items-center
-      justify-center
-      bg-gray-50
-      px-4
+      absolute
+      top-0
+      left-1/2
+      -translate-x-1/2
+
+      h-[500px]
+      w-[500px]
+
+      rounded-full
+
+      bg-orange-500/10
+
+      blur-[120px]
+      "
+    />
+
+    <div
+      className="
+      relative
+      z-10
+
+      w-full
+      max-w-md
       "
     >
       <div
         className="
-        bg-white
+        rounded-3xl
+
         border
-        rounded-2xl
-        p-8
-        w-full
-        max-w-md
+        border-slate-800
+
+        bg-slate-900/80
+        backdrop-blur-xl
+
+        shadow-2xl
+
+        overflow-hidden
         "
       >
-        <h1
-          className="
-          text-3xl
-          font-bold
-          mb-2
-          "
-        >
-          Verify Email
-        </h1>
+        {/* Header */}
 
-        <p
-          className="
-          text-gray-500
-          mb-6
-          "
-        >
-          Enter the OTP sent to
-          <br />
-          <span className="font-medium">{email}</span>
-        </p>
-
-        {error && (
+        <div className="p-8">
           <div
             className="
-            mb-4
-            bg-red-50
-            border
-            border-red-200
-            text-red-600
-            p-3
-            rounded-lg
+            flex
+            justify-center
+            mb-6
+            "
+          >
+            <div
+              className="
+              h-16
+              w-16
+
+              rounded-2xl
+
+              bg-orange-500/10
+              border
+              border-orange-500/20
+
+              flex
+              items-center
+              justify-center
+              "
+            >
+              <ShieldCheck
+                size={30}
+                className="text-orange-400"
+              />
+            </div>
+          </div>
+
+          <h1
+            className="
+            text-3xl
+            font-bold
+
+            text-center
+            text-white
+            "
+          >
+            Verify Email
+          </h1>
+
+          <p
+            className="
+            text-center
+            text-slate-400
+            mt-3
+            "
+          >
+            Enter the verification code
+            sent to
+          </p>
+
+          <div
+            className="
+            mt-4
+
+            flex
+            items-center
+            justify-center
+            gap-2
+
+            text-orange-400
             text-sm
             "
           >
-            {error}
+            <Mail size={16} />
+
+            <span className="break-all">
+              {email}
+            </span>
           </div>
-        )}
+        </div>
 
-        <form onSubmit={handleVerify} className="space-y-4">
-          <input
-            type="text"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            placeholder="Enter OTP"
-            maxLength={6}
-            className="
-            w-full
-            border
-            rounded-lg
-            p-3
-            text-center
-            text-2xl
-            tracking-widest
-            "
-          />
+        {/* Form */}
 
-          <Button
-            type="submit"
-            disabled={loading || otp.length !== 6}
-            className="w-full"
+        <div className="px-8 pb-8">
+          {error && (
+            <div
+              className="
+              mb-5
+
+              rounded-xl
+
+              border
+              border-red-500/20
+
+              bg-red-500/10
+
+              px-4
+              py-3
+
+              text-sm
+              text-red-400
+              "
+            >
+              {error}
+            </div>
+          )}
+
+          <form
+            onSubmit={handleVerify}
+            className="space-y-5"
           >
-            {loading ? "Verifying..." : "Verify Email"}
-          </Button>
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) =>
+                setOtp(e.target.value)
+              }
+              maxLength={6}
+              placeholder="000000"
+              className="
+              w-full
 
+              rounded-2xl
 
-          <div className="text-center mt-4">
+              border
+              border-slate-700
 
-  {countdown > 0 ? (
+              bg-slate-950
 
-    <p
-      className="
-      text-sm
-      text-gray-500
-      "
-    >
-      Resend OTP in{" "}
-      {countdown}s
-    </p>
+              px-4
+              py-4
 
-  ) : (
+              text-center
 
-    <button
-      type="button"
-      onClick={
-        handleResend
-      }
-      disabled={
-        resendLoading
-      }
-      className="
-      text-sm
-      font-medium
-      underline
-      "
-    >
-      {resendLoading
-        ? "Sending..."
-        : "Resend OTP"}
-    </button>
+              text-3xl
+              font-semibold
 
-  )}
+              tracking-[10px]
 
-</div>
-        </form>
+              text-white
+
+              outline-none
+
+              transition-all
+
+              focus:border-orange-500
+              focus:ring-2
+              focus:ring-orange-500/20
+              "
+            />
+
+            <Button
+              type="submit"
+              disabled={
+                loading ||
+                otp.length !== 6
+              }
+              className="
+              w-full
+              h-12
+              "
+            >
+              {loading ? (
+                <div
+                  className="
+                  flex
+                  items-center
+                  gap-2
+                  "
+                >
+                  <Loader2
+                    size={18}
+                    className="animate-spin"
+                  />
+                  Verifying...
+                </div>
+              ) : (
+                "Verify Email"
+              )}
+            </Button>
+          </form>
+
+          {/* Resend */}
+
+          <div
+            className="
+            mt-6
+            text-center
+            "
+          >
+            {countdown > 0 ? (
+              <div
+                className="
+                inline-flex
+                items-center
+                gap-2
+
+                rounded-full
+
+                bg-slate-800
+
+                px-4
+                py-2
+
+                text-sm
+                text-slate-400
+                "
+              >
+                Resend OTP in
+                <span className="text-orange-400">
+                  {countdown}s
+                </span>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={
+                  resendLoading
+                }
+                className="
+                inline-flex
+                items-center
+                gap-2
+
+                text-orange-400
+
+                hover:text-orange-300
+
+                transition-colors
+                "
+              >
+                {resendLoading ? (
+                  <>
+                    <Loader2
+                      size={16}
+                      className="animate-spin"
+                    />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw
+                      size={16}
+                    />
+                    Resend OTP
+                  </>
+                )}
+              </button>
+            )}
+          </div>
+        </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

@@ -5,7 +5,15 @@ import useAuth from "@/hooks/useAuth";
 import { logoutUser } from "@/services/auth.service";
 import { useRouter } from "next/navigation";
 
-export default function Navbar() {
+import {
+  Menu,
+  Activity,
+  LogOut,
+} from "lucide-react";
+
+export default function Navbar({
+  setSidebarOpen,
+}) {
   const router = useRouter();
 
   const { user, setUser } = useAuth();
@@ -23,18 +31,83 @@ export default function Navbar() {
   return (
     <header
       className="
+      sticky
+      top-0
+      z-30
+
       h-16
-      bg-white
+
+      bg-slate-950/80
+      backdrop-blur-xl
+
       border-b
-      px-6
+      border-slate-800
+
+      px-4
+      sm:px-6
+
       flex
       items-center
       justify-between
-    "
+      "
     >
-      <div>Welcome, {user?.name}</div>
+      <div
+        className="
+        flex
+        items-center
+        gap-3
+        "
+      >
+        <button
+          onClick={() =>
+            setSidebarOpen(true)
+          }
+          className="
+          md:hidden
 
-      <Button onClick={handleLogout}>Logout</Button>
+          p-2
+
+          rounded-lg
+
+          hover:bg-slate-800
+          "
+        >
+          <Menu size={20} />
+        </button>
+
+        <div className="md:hidden flex items-center gap-2">
+          <Activity
+            size={18}
+            className="text-orange-400"
+          />
+
+          <span className="font-semibold">
+            PingNest
+          </span>
+        </div>
+
+        <div className="hidden md:block">
+          <h2 className="font-medium text-white">
+            Welcome back,
+            {" "}
+            {user?.name}
+          </h2>
+        </div>
+      </div>
+
+      <Button
+        onClick={handleLogout}
+        className="
+        flex
+        items-center
+        gap-2
+        "
+      >
+        <LogOut size={16} />
+        <span className="hidden sm:inline">
+          Logout
+        </span>
+      </Button>
     </header>
   );
 }

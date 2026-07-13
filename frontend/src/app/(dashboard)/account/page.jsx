@@ -5,50 +5,55 @@ import { useEffect, useState } from "react";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
+import PasswordInput from "@/components/ui/PasswordInput";
 
-import { getCurrentUser } from "@/services/auth.service";
+import {
+  getCurrentUser,
+  changePassword,
+  deleteAccount,
+} from "@/services/auth.service";
 
 import toast from "react-hot-toast";
-import PasswordInput from "@/components/ui/PasswordInput";
-import { useRouter } from "next/navigation";
+
+import {
+  User,
+  Shield,
+  Calendar,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 
 export default function AccountPage() {
-
-    
-  const router =
-  useRouter();
-
-
-  const [user, setUser] =
-    useState(null);
+  const [user, setUser] = useState(null);
 
   const [loading, setLoading] =
     useState(true);
 
-    const [
-  currentPassword,
-  setCurrentPassword,
-] = useState("");
+  const [
+    currentPassword,
+    setCurrentPassword,
+  ] = useState("");
 
-const [
-  newPassword,
-  setNewPassword,
-] = useState("");
+  const [
+    newPassword,
+    setNewPassword,
+  ] = useState("");
 
-const [
-  deletePassword,
-  setDeletePassword,
-] = useState("");
+  const [
+    deletePassword,
+    setDeletePassword,
+  ] = useState("");
 
-const [
-  deleting,
-  setDeleting,
-] = useState(false);
+  const [
+    deleting,
+    setDeleting,
+  ] = useState(false);
 
-const [
-  passwordLoading,
-  setPasswordLoading,
-] = useState(false);
+  const [
+    passwordLoading,
+    setPasswordLoading,
+  ] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -56,9 +61,7 @@ const [
         const res =
           await getCurrentUser();
 
-        setUser(
-          res.data.data
-        );
+        setUser(res.data.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -70,299 +73,412 @@ const [
   }, []);
 
   const handlePasswordChange =
-  async () => {
+    async () => {
+      try {
+        setPasswordLoading(true);
 
-    try {
+        await changePassword({
+          currentPassword,
+          newPassword,
+        });
 
-      setPasswordLoading(true);
+        toast.success(
+          "Password updated successfully"
+        );
 
-      await changePassword({
-        currentPassword,
-        newPassword,
-      });
+        setCurrentPassword("");
+        setNewPassword("");
+      } catch (error) {
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Failed to update password"
+        );
+      } finally {
+        setPasswordLoading(false);
+      }
+    };
 
-      toast.success(
-        "Password updated"
-      );
+  const handleDeleteAccount =
+    async () => {
+      const confirmed =
+        window.confirm(
+          "Are you sure you want to permanently delete your account?"
+        );
 
-      setCurrentPassword("");
-      setNewPassword("");
+      if (!confirmed) return;
 
-    } catch (error) {
+      try {
+        setDeleting(true);
 
-      toast.error(
-        error.response?.data
-          ?.message
-      );
+        await deleteAccount({
+          password:
+            deletePassword,
+        });
 
-    } finally {
+        toast.success(
+          "Account deleted successfully"
+        );
 
-      setPasswordLoading(false);
-
-    }
-  };
-
-
-const handleDeleteAccount =
-  async () => {
-
-    const confirmed =
-      window.confirm(
-        "Delete account permanently?"
-      );
-
-    if (!confirmed) return;
-
-    try {
-
-      setDeleting(true);
-
-      await deleteAccount({
-        password:
-          deletePassword,
-      });
-
-      toast.success(
-        "Account deleted"
-      );
-
-      window.location.href =
-        "/login";
-
-    } catch (error) {
-
-      toast.error(
-        error.response?.data
-          ?.message
-      );
-
-    } finally {
-
-      setDeleting(false);
-
-    }
-  };
+        window.location.href =
+          "/login";
+      } catch (error) {
+        toast.error(
+          error.response?.data
+            ?.message ||
+            "Failed to delete account"
+        );
+      } finally {
+        setDeleting(false);
+      }
+    };
 
   if (loading) {
     return (
-      <div>
-        Loading...
+      <div
+        className="
+        min-h-[300px]
+        flex
+        items-center
+        justify-center
+        text-slate-400
+        "
+      >
+        Loading Account...
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* Header */}
 
-      <div>
-        <h1
-          className="
-          text-3xl
-          font-bold
-          "
-        >
-          Account Settings
-        </h1>
+     <div
+  className="
+  relative
 
-        <p
-          className="
-          text-gray-500
-          mt-2
-          "
-        >
-          Manage your profile and security settings.
-        </p>
-      </div>
+  overflow-hidden
+
+  rounded-3xl
+
+  border
+  border-slate-800
+
+  bg-gradient-to-br
+  from-slate-900
+  via-slate-950
+  to-slate-950
+
+  p-6
+  md:p-8
+  "
+>
+  <div
+    className="
+    absolute
+
+    top-0
+    right-0
+
+    h-40
+    w-40
+
+    rounded-full
+
+    bg-orange-500/10
+
+    blur-3xl
+    "
+  />
+
+  <div className="relative">
+    <p
+      className="
+      text-orange-400
+      text-sm
+      font-medium
+      uppercase
+      tracking-wider
+      "
+    >
+      Account
+    </p>
+
+    <h1
+      className="
+      mt-2
+
+      text-3xl
+      md:text-4xl
+
+      font-bold
+
+      text-white
+      "
+    >
+      Account Settings
+    </h1>
+
+    <p
+      className="
+      mt-3
+
+      max-w-2xl
+
+      text-slate-400
+      "
+    >
+      Manage your profile,
+      credentials, and security
+      settings for your PingNest
+      workspace.
+    </p>
+  </div>
+</div>
 
       {/* Profile */}
 
-      <Card>
+      <Card className="p-6 md:p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <User
+            size={22}
+            className="text-orange-400"
+          />
 
-        <h2
-          className="
-          text-xl
-          font-semibold
-          mb-4
-          "
-        >
-          Profile
-        </h2>
+          <h2
+            className="
+            text-xl
+            font-semibold
+            text-white
+            "
+          >
+            Profile Information
+          </h2>
+        </div>
 
-        <div className="space-y-4">
-
+        <div className="space-y-5">
           <Input
             label="Name"
-            value={
-              user?.name || ""
-            }
+            value={user?.name || ""}
             readOnly
           />
 
           <Input
             label="Email"
-            value={
-              user?.email || ""
-            }
+            value={user?.email || ""}
             readOnly
           />
 
           <div>
-
             <p
               className="
               text-sm
-              text-gray-500
+              text-slate-500
               "
             >
               Email Status
             </p>
 
-            <span
-              className={`
-                inline-block
-                mt-2
-                px-3
-                py-1
-                rounded-full
-                text-sm
-                ${
-                  user?.isVerified
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700"
-                }
-              `}
-            >
-              {user?.isVerified
-                ? "Verified"
-                : "Not Verified"}
-            </span>
+            <div className="mt-3">
+              <span
+                className={`
+                  inline-flex
+                  items-center
+                  gap-2
 
+                  px-3
+                  py-1.5
+
+                  rounded-full
+                  text-sm
+                  border
+
+                  ${
+                    user?.isVerified
+                      ? `
+                        bg-green-500/10
+                        text-green-400
+                        border-green-500/20
+                      `
+                      : `
+                        bg-red-500/10
+                        text-red-400
+                        border-red-500/20
+                      `
+                  }
+                `}
+              >
+                {user?.isVerified ? (
+                  <CheckCircle2
+                    size={14}
+                  />
+                ) : (
+                  <XCircle size={14} />
+                )}
+
+                {user?.isVerified
+                  ? "Verified"
+                  : "Not Verified"}
+              </span>
+            </div>
           </div>
 
           <div>
-
             <p
               className="
               text-sm
-              text-gray-500
+              text-slate-500
+              flex
+              items-center
+              gap-2
               "
             >
+              <Calendar size={14} />
               Member Since
             </p>
 
-            <p className="mt-1">
+            <p
+              className="
+              mt-2
+              text-white
+              "
+            >
               {new Date(
                 user?.createdAt
               ).toLocaleDateString()}
             </p>
-
           </div>
-
         </div>
-
       </Card>
 
       {/* Security */}
 
       <Card>
+        <div className="flex items-center gap-3 mb-6">
+          <Shield
+            size={22}
+            className="text-orange-400"
+          />
 
-  <h2
-    className="
-    text-xl
-    font-semibold
-    mb-4
-    "
-  >
-    Security
-  </h2>
+          <h2
+            className="
+            text-xl
+            font-semibold
+            text-white
+            "
+          >
+            Security
+          </h2>
+        </div>
 
-  <div className="space-y-4">
+        <div className="space-y-5">
+          <PasswordInput
+            label="Current Password"
+            registration={{
+              value:
+                currentPassword,
+              onChange: (e) =>
+                setCurrentPassword(
+                  e.target.value
+                ),
+            }}
+          />
 
-    <PasswordInput
-      label="Current Password"
-      registration={{
-        value:
-          currentPassword,
-        onChange: (e) =>
-          setCurrentPassword(
-            e.target.value
-          ),
-      }}
-    />
+          <PasswordInput
+            label="New Password"
+            registration={{
+              value: newPassword,
+              onChange: (e) =>
+                setNewPassword(
+                  e.target.value
+                ),
+            }}
+          />
 
-    <PasswordInput
-      label="New Password"
-      registration={{
-        value:
-          newPassword,
-        onChange: (e) =>
-          setNewPassword(
-            e.target.value
-          ),
-      }}
-    />
-
-    <Button
-      onClick={
-        handlePasswordChange
-      }
-      disabled={
-        passwordLoading
-      }
-    >
-      {passwordLoading
-        ? "Updating..."
-        : "Change Password"}
-    </Button>
-
-  </div>
-
-</Card>
+          <Button
+            onClick={
+              handlePasswordChange
+            }
+            disabled={
+              passwordLoading
+            }
+            className="
+            bg-orange-500
+            hover:bg-orange-400
+            transition-all
+            "
+          >
+            {passwordLoading
+              ? "Updating..."
+              : "Change Password"}
+          </Button>
+        </div>
+      </Card>
 
       {/* Danger Zone */}
 
-      <Card>
+      <Card
+        className="
+        border
+        border-red-500/20
+        "
+      >
+        <div className="flex items-center gap-3 mb-6">
+          <AlertTriangle
+            size={22}
+            className="text-red-400"
+          />
 
-  <h2
-    className="
-    text-red-600
-    font-semibold
-    mb-4
-    "
-  >
-    Danger Zone
-  </h2>
+          <h2
+            className="
+            text-xl
+            font-semibold
+            text-red-400
+            "
+          >
+            Danger Zone
+          </h2>
+        </div>
 
-  <PasswordInput
-    label="Confirm Password"
-    registration={{
-      value:
-        deletePassword,
-      onChange: (e) =>
-        setDeletePassword(
-          e.target.value
-        ),
-    }}
-  />
+        <p
+          className="
+          text-slate-400
+          mb-5
+          "
+        >
+          Deleting your account is
+          permanent and cannot be
+          undone.
+        </p>
 
-  <Button
-    onClick={
-      handleDeleteAccount
-    }
-    disabled={deleting}
-    className="
-    bg-red-600
-    hover:bg-red-700
-    mt-4
-    "
-  >
-    {deleting
-      ? "Deleting..."
-      : "Delete Account"}
-  </Button>
+        <PasswordInput
+          label="Confirm Password"
+          registration={{
+            value:
+              deletePassword,
+            onChange: (e) =>
+              setDeletePassword(
+                e.target.value
+              ),
+          }}
+        />
 
-</Card>
+        <Button
+  className="
+  mt-4
 
+  w-full
+  sm:w-auto
+
+  bg-red-600
+  hover:bg-red-500
+  "
+>
+          {deleting
+            ? "Deleting..."
+            : "Delete Account"}
+        </Button>
+      </Card>
     </div>
   );
 }
