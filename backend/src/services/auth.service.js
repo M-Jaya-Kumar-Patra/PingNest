@@ -9,11 +9,18 @@ import { sendOtpEmail } from "./mail.service.js";
 export const registerUser =
   async (userData) => {
 
+    console.log("STEP 1 - Register service started");
+
     const {
       name,
       email,
       password,
     } = userData;
+
+    console.log(
+      "STEP 2 - Checking existing user:",
+      email
+    );
 
     const existingUser =
       await User.findOne({
@@ -21,14 +28,27 @@ export const registerUser =
       });
 
     if (existingUser) {
+      console.log(
+        "STEP 3 - User already exists"
+      );
+
       throw new ApiError(
         409,
         "Email already registered"
       );
     }
 
+    console.log(
+      "STEP 4 - Generating OTP"
+    );
+
     const otp =
       generateOtp();
+
+    console.log(
+      "STEP 5 - OTP Generated:",
+      otp
+    );
 
     const user =
       await User.create({
@@ -46,15 +66,36 @@ export const registerUser =
           ),
       });
 
+    console.log(
+      "STEP 6 - User created:",
+      user._id
+    );
+
+    console.log(
+      "STEP 7 - Sending email"
+    );
+
     await sendOtpEmail(
       email,
       otp
     );
 
-    return await User.findById(user._id)
-  .select(
-    "-password -refreshToken -verificationOtp"
-  );
+    console.log(
+      "STEP 8 - Email sent successfully"
+    );
+
+    const safeUser =
+      await User.findById(
+        user._id
+      ).select(
+        "-password -refreshToken -verificationOtp"
+      );
+
+    console.log(
+      "STEP 9 - Returning response"
+    );
+
+    return safeUser;
   };
 
 

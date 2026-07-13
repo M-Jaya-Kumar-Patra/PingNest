@@ -14,24 +14,61 @@ export const transporter =
 export const sendOtpEmail =
   async (email, otp) => {
 
-    await transporter.sendMail({
-      from:
-        process.env.EMAIL_USER,
+    console.log(
+      "MAIL STEP 1 - Function called"
+    );
 
-      to: email,
+    console.log(
+      "MAIL STEP 2 - Recipient:",
+      email
+    );
 
-      subject:
-        "PingNest Verification OTP",
+    console.log(
+      "MAIL STEP 3 - EMAIL_USER:",
+      process.env.EMAIL_USER
+    );
 
-      html: `
-        <h2>Verify Your Account</h2>
+    try {
 
-        <p>Your OTP is:</p>
+      const info =
+        await transporter.sendMail({
+          from:
+            process.env.EMAIL_USER,
 
-        <h1>${otp}</h1>
+          to: email,
 
-        <p>Valid for 10 minutes.</p>
-      `,
-    });
+          subject:
+            "PingNest Verification OTP",
 
+          html: `
+            <h2>Verify Your Account</h2>
+
+            <p>Your OTP is:</p>
+
+            <h1>${otp}</h1>
+
+            <p>Valid for 10 minutes.</p>
+          `,
+        });
+
+      console.log(
+        "MAIL STEP 4 - Email sent"
+      );
+
+      console.log(
+        "MAIL STEP 5 - Message ID:",
+        info.messageId
+      );
+
+      return info;
+
+    } catch (error) {
+
+      console.error(
+        "MAIL ERROR:",
+        error
+      );
+
+      throw error;
+    }
   };

@@ -18,14 +18,34 @@ import {resendVerificationOtp} from "../services/auth.service.js";
 
 
 // register controller
-export const register = asyncHandler(async (req, res) => {
-  console.log("Register controller reached");
-  const user = await registerUser(req.validatedData);
+export const register =
+  asyncHandler(
+    async (req, res) => {
 
-  return res
-    .status(201)
-    .json(new ApiResponse(201, user, "User registered successfully"));
-});
+      console.log(
+        "REGISTER CONTROLLER START"
+      );
+
+      const user =
+        await registerUser(
+          req.validatedData
+        );
+
+      console.log(
+        "REGISTER CONTROLLER END"
+      );
+
+      return res
+        .status(201)
+        .json(
+          new ApiResponse(
+            201,
+            user,
+            "User registered successfully"
+          )
+        );
+    }
+  );
 
 //login controller
 export const login = asyncHandler(async (req, res) => {
