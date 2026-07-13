@@ -9,8 +9,8 @@ export const transporter =
     secure: true,
 
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: env.emailUser,
+      pass: env.emailPass,
     },
 
     connectionTimeout: 10000,
@@ -26,25 +26,7 @@ export const sendOtpEmail = async (
 
   console.log("VERIFYING TRANSPORTER");
 
-  console.log(
-  "EMAIL USER:",
-  process.env.EMAIL_USER
-);
-
-console.log(
-  "EMAIL PASS EXISTS:",
-  !!process.env.EMAIL_PASS
-);
-
-console.log(
-  "EMAIL USER1:",
-  env.EMAIL_USER
-);
-
-console.log(
-  "EMAIL PASS EXISTS1:",
-  !!env.EMAIL_PASS
-);
+  
 
   await transporter.verify();
 
@@ -52,7 +34,7 @@ console.log(
 
   const info =
     await transporter.sendMail({
-      from: env.EMAIL_USER,
+      from: env.emailUser,
       to: email,
       subject: "PingNest Verification OTP",
       html: `<h1>${otp}</h1>`,
