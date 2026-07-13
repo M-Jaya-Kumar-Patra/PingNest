@@ -25,7 +25,7 @@ export const sendOtpEmail = async (
 ) => {
 
   console.log("VERIFYING TRANSPORTER");
-console.log(env.emailUser, emailPass)
+console.log(env.emailUser, env.emailPass);
   
 
   await transporter.verify();
