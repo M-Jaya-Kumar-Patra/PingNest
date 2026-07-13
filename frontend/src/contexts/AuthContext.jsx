@@ -38,20 +38,18 @@ export function AuthProvider({ children }) {
   // Session expired listener
   useEffect(() => {
     const handleSessionExpired = () => {
-  console.log("SESSION EXPIRED");
+      setUser(null);
 
-  setUser(null);
+      localStorage.clear();
+      sessionStorage.clear();
 
-  localStorage.clear();
-  sessionStorage.clear();
-
-  if (
-    window.location.pathname !== "/login" &&
-    window.location.pathname !== "/register"
-  ) {
-    window.location.replace("/login");
-  }
-};
+      if (
+        window.location.pathname !== "/login" &&
+        window.location.pathname !== "/register"
+      ) {
+        window.location.replace("/login");
+      }
+    };
 
     window.addEventListener("session-expired", handleSessionExpired);
 
@@ -61,25 +59,16 @@ export function AuthProvider({ children }) {
   }, []);
 
   const refreshUser = async () => {
-  try {
-    console.log("REFRESH USER START");
+    try {
+      const res = await getCurrentUser();
 
-    const res = await getCurrentUser();
+      setUser(res.data.data);
+    } catch (error) {
+      console.log("REFRESH USER FAILED", error);
 
-    console.log(
-      "CURRENT USER:",
-      res.data.data
-    );
-
-    setUser(res.data.data);
-
-    console.log("USER SET");
-  } catch (error) {
-    console.log("REFRESH USER FAILED", error);
-
-    setUser(null);
-  }
-};
+      setUser(null);
+    }
+  };
 
   return (
     <AuthContext.Provider

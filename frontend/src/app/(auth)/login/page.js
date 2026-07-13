@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
-import {Loader2} from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import Button from "@/components/ui/Button";
 
@@ -19,11 +19,9 @@ export default function LoginPage() {
 
   const { refreshUser } = useAuth();
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [authError, setAuthError] =
-    useState("");
+  const [authError, setAuthError] = useState("");
 
   const {
     register,
@@ -38,25 +36,18 @@ export default function LoginPage() {
       setAuthError("");
 
       await loginUser(data);
-console.log("LOGIN SUCCESS");
 
-await refreshUser();
-console.log("REFRESH SUCCESS");
+      await refreshUser();
 
-router.push("/dashboard");
-console.log("PUSHED DASHBOARD");
+      toast.success("Login successful");
 
+      router.push("/dashboard");
     } catch (error) {
-
       setAuthError(
-        error.response?.data?.message ||
-        "Invalid email or password"
+        error.response?.data?.message || "Invalid email or password",
       );
-
     } finally {
-
       setLoading(false);
-
     }
   };
 
@@ -120,12 +111,7 @@ console.log("PUSHED DASHBOARD");
           </div>
         )}
 
-        <form
-          onSubmit={handleSubmit(
-            onSubmit
-          )}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label
               className="
@@ -151,23 +137,16 @@ console.log("PUSHED DASHBOARD");
               focus:ring-2
               focus:ring-black
               "
-              {...register(
-                "email",
-                {
-                  required:
-                    "Email is required",
+              {...register("email", {
+                required: "Email is required",
 
-                  pattern: {
-                    value:
-                      /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message:
-                      "Enter a valid email address",
-                  },
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Enter a valid email address",
+                },
 
-                  onChange: () =>
-                    setAuthError(""),
-                }
-              )}
+                onChange: () => setAuthError(""),
+              })}
             />
 
             {errors.email && (
@@ -178,51 +157,40 @@ console.log("PUSHED DASHBOARD");
                 mt-1
                 "
               >
-                {
-                  errors.email
-                    .message
-                }
+                {errors.email.message}
               </p>
             )}
           </div>
 
           <PasswordInput
-  label="Password"
-  disabled={loading}
-  error={
-    errors.password?.message
-  }
-  registration={register(
-    "password",
-    {
-      required:
-        "Password is required",
+            label="Password"
+            disabled={loading}
+            error={errors.password?.message}
+            registration={register("password", {
+              required: "Password is required",
 
-      onChange: () =>
-        setAuthError(""),
-    }
-  )}
-/>
+              onChange: () => setAuthError(""),
+            })}
+          />
 
-<div
-  className="
+          <div
+            className="
   flex
   justify-end
   "
->
-  <Link
-    href="/forgot-password"
-    className="
+          >
+            <Link
+              href="/forgot-password"
+              className="
     text-sm
     text-gray-600
     hover:text-black
     hover:underline
     "
-  >
-    Forgot Password?
-  </Link>
-</div>
-
+            >
+              Forgot Password?
+            </Link>
+          </div>
 
           <Button
             type="submit"
@@ -237,10 +205,7 @@ console.log("PUSHED DASHBOARD");
           >
             {loading ? (
               <>
-                <Loader2
-                  size={18}
-                  className="animate-spin"
-                />
+                <Loader2 size={18} className="animate-spin" />
                 Logging in...
               </>
             ) : (

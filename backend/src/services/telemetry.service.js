@@ -3,19 +3,7 @@ import Telemetry from "../models/telemetry.model.js";
 import ApiError from "../utils/ApiError.js";
 import { getIO } from "../sockets/socket.js";
 
-
-
 export const ingestTelemetry = async (payload) => {
-
-    console.log(
-  "Telemetry received:",
-  payload
-);
-
-
-
-
-
   const project = await Project.findOne({
     apiKey: payload.apiKey,
   });
@@ -24,7 +12,7 @@ export const ingestTelemetry = async (payload) => {
     throw new ApiError(401, "Invalid API key");
   }
 
-  const telemetry =  await Telemetry.create({
+  const telemetry = await Telemetry.create({
     project: project._id,
 
     route: payload.route,
@@ -38,12 +26,7 @@ export const ingestTelemetry = async (payload) => {
     responseTime: payload.responseTime,
   });
 
-  getIO()
-  .to(project._id.toString())
-  .emit(
-    "telemetry:new",
-    telemetry
-  );
+  getIO().to(project._id.toString()).emit("telemetry:new", telemetry);
 
-return telemetry;
+  return telemetry;
 };

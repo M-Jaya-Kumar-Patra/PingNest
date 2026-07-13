@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 
-import {Loader2} from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -17,19 +17,13 @@ import toast from "react-hot-toast";
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [loading, setLoading] =
-    useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [authError, setAuthError] =
-    useState("");
+  const [authError, setAuthError] = useState("");
 
-  const [showPassword, setShowPassword] =
-    useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const [
-    showConfirmPassword,
-    setShowConfirmPassword,
-  ] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -38,8 +32,7 @@ export default function RegisterPage() {
     formState: { errors },
   } = useForm();
 
-  const password =
-    watch("password");
+  const password = watch("password");
 
   const onSubmit = async (data) => {
     try {
@@ -47,34 +40,23 @@ export default function RegisterPage() {
 
       setAuthError("");
 
-      const {
-        confirmPassword,
-        ...payload
-      } = data;
+      const { confirmPassword, ...payload } = data;
 
       const response = await registerUser(payload);
 
-// console.log(response);
+      // console.log(response);
 
-// toast.success("Email sent");
+      // toast.success("Email sent");
 
-// router.push(
-//   `/verify-email?email=${payload.email}`
-// );
+      // router.push(
+      //   `/verify-email?email=${payload.email}`
+      // );
 
-router.push("/login")
-
+      router.push("/login");
     } catch (error) {
-
-      setAuthError(
-        error.response?.data?.message ||
-        "Registration failed"
-      );
-
+      setAuthError(error.response?.data?.message || "Registration failed");
     } finally {
-
       setLoading(false);
-
     }
   };
 
@@ -116,8 +98,7 @@ router.push("/login")
             mt-2
             "
           >
-            Start monitoring your APIs
-            with PingNest.
+            Start monitoring your APIs with PingNest.
           </p>
         </div>
 
@@ -139,103 +120,65 @@ router.push("/login")
           </div>
         )}
 
-        <form
-          onSubmit={handleSubmit(
-            onSubmit
-          )}
-          className="space-y-4"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <Input
             label="Name"
             type="text"
             disabled={loading}
             autoFocus
-            {...register(
-              "name",
-              {
-                required:
-                  "Name is required",
-                onChange: () =>
-                  setAuthError(""),
-              }
-            )}
-            error={
-              errors.name?.message
-            }
+            {...register("name", {
+              required: "Name is required",
+              onChange: () => setAuthError(""),
+            })}
+            error={errors.name?.message}
           />
 
           <Input
             label="Email"
             type="email"
             disabled={loading}
-            {...register(
-              "email",
-              {
-                required:
-                  "Email is required",
+            {...register("email", {
+              required: "Email is required",
 
-                pattern: {
-                  value:
-                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message:
-                    "Enter a valid email address",
-                },
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Enter a valid email address",
+              },
 
-                onChange: () =>
-                  setAuthError(""),
-              }
-            )}
-            error={
-              errors.email?.message
-            }
+              onChange: () => setAuthError(""),
+            })}
+            error={errors.email?.message}
           />
 
           <PasswordInput
-  label="Password"
-  disabled={loading}
-  error={
-    errors.password?.message
-  }
-  registration={register(
-    "password",
-    {
-      required:
-        "Password is required",
+            label="Password"
+            disabled={loading}
+            error={errors.password?.message}
+            registration={register("password", {
+              required: "Password is required",
 
-      minLength: {
-        value: 6,
-        message:
-          "Password must be at least 6 characters",
-      },
+              minLength: {
+                value: 6,
+                message: "Password must be at least 6 characters",
+              },
 
-      onChange: () =>
-        setAuthError(""),
-    }
-  )}
-/>
+              onChange: () => setAuthError(""),
+            })}
+          />
 
           <PasswordInput
-  label="Confirm Password"
-  disabled={loading}
-  error={
-    errors.confirmPassword
-      ?.message
-  }
-  registration={register(
-    "confirmPassword",
-    {
-      required:
-        "Please confirm your password",
+            label="Confirm Password"
+            disabled={loading}
+            error={errors.confirmPassword?.message}
+            registration={register("confirmPassword", {
+              required: "Please confirm your password",
 
-      validate: (value) =>
-        value === password ||
-        "Passwords do not match",
+              validate: (value) =>
+                value === password || "Passwords do not match",
 
-      onChange: () =>
-        setAuthError(""),
-    }
-  )}
-/>
+              onChange: () => setAuthError(""),
+            })}
+          />
 
           <Button
             type="submit"
@@ -250,10 +193,7 @@ router.push("/login")
           >
             {loading ? (
               <>
-                <Loader2
-                  size={18}
-                  className="animate-spin"
-                />
+                <Loader2 size={18} className="animate-spin" />
                 Creating Account...
               </>
             ) : (

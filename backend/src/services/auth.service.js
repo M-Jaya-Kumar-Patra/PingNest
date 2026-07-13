@@ -4,114 +4,48 @@ import generateTokens from "../utils/generateTokens.js";
 import generateOtp from "../utils/generateOtp.js";
 import { sendOtpEmail } from "./mail.service.js";
 
+export const registerUser = async (userData) => {
+  const { name, email, password } = userData;
 
+  const existingUser = await User.findOne({
+    email,
+  });
 
-export const registerUser =
-  async (userData) => {
+  if (existingUser) {
+    throw new ApiError(409, "Email already registered");
+  }
 
-    console.log("STEP 1 - Register service started");
+  const otp = generateOtp();
 
-    const {
-      name,
-      email,
-      password,
-    } = userData;
+  // await sendOtpEmail(
+  //   email,
+  //   otp
+  // );
 
-    console.log(
-      "STEP 2 - Checking existing user:",
-      email
-    );
+  const user = await User.create({
+    name,
+    email,
+    password,
 
-    const existingUser =
-      await User.findOne({
-        email,
-      });
+    // verificationOtp:
+    //   otp,
 
-    if (existingUser) {
-      console.log(
-        "STEP 3 - User already exists"
-      );
+    verificationOtpExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
+  });
 
-      throw new ApiError(
-        409,
-        "Email already registered"
-      );
-    }
+  const safeUser = await User.findById(user._id).select(
+    "-password -refreshToken -verificationOtp",
+  );
 
-    console.log(
-      "STEP 4 - Generating OTP"
-    );
-
-    const otp =
-      generateOtp();
-
-    console.log(
-      "STEP 5 - OTP Generated:",
-      otp
-    );
-
-    // await sendOtpEmail(
-    //   email,
-    //   otp
-    // );
-
-    const user =
-      await User.create({
-        name,
-        email,
-        password,
-
-        // verificationOtp:
-        //   otp,
-
-        verificationOtpExpiresAt:
-          new Date(
-            Date.now() +
-            10 * 60 * 1000
-          ),
-      });
-
-    console.log(
-      "STEP 6 - User created:",
-      user._id
-    );
-
-    console.log(
-      "STEP 7 - Sending email"
-    );
-
-    
-
-    console.log(
-      "STEP 8 - Email sent successfully"
-    );
-
-    const safeUser =
-      await User.findById(
-        user._id
-      ).select(
-        "-password -refreshToken -verificationOtp"
-      );
-
-    console.log(
-      "STEP 9 - Returning response"
-    );
-
-    return safeUser;
-  };
-
-
+  return safeUser;
+};
 
 // login user
 export const loginUser = async (email, password) => {
-
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError(
-      401,
-      "Invalid credentials"
-    );
+    throw new ApiError(401, "Invalid credentials");
   }
 
   // if (!user.isVerified) {
@@ -119,20 +53,19 @@ export const loginUser = async (email, password) => {
   //   403,
   //   "Please verify your email first"
   // );
-// }
+  // }
 
   const isPasswordCorrect = await user.comparePassword(password);
 
   if (!isPasswordCorrect) {
-    throw new ApiError(
-      401,
-      "Invalid credentials"
-    );
+    throw new ApiError(401, "Invalid credentials");
   }
 
   const tokens = await generateTokens(user);
 
-  const safeUser = await User.findById(user._id).select("-password -refreshToken");
+  const safeUser = await User.findById(user._id).select(
+    "-password -refreshToken",
+  );
 
   return {
     user: safeUser,
@@ -140,249 +73,146 @@ export const loginUser = async (email, password) => {
   };
 };
 
-
-
 // get current user
 
 export const getCurrentUser = async (userId) => {
-    return await User.findById(userId).select("-password -refreshToken");
-}
-
+  return await User.findById(userId).select("-password -refreshToken");
+};
 
 // logout service
 
-export const logoutUser = async(userId) => {
-    await User.findByIdAndUpdate(userId, {refreshToken: null});
-}
+export const logoutUser = async (userId) => {
+  await User.findByIdAndUpdate(userId, { refreshToken: null });
+};
 
-
-
-
-
-
-export const resendVerificationOtp =
-  async (email) => {
-
-    const user =
-      await User.findOne({
-        email,
-      });
-
-    if (!user) {
-      throw new ApiError(
-        404,
-        "User not found"
-      );
-    }
-
-    if (user.isVerified) {
-      throw new ApiError(
-        400,
-        "Email already verified"
-      );
-    }
-
-    const otp =
-      generateOtp();
-
-    user.verificationOtp =
-      otp;
-
-    user.verificationOtpExpiresAt =
-      new Date(
-        Date.now() +
-          10 * 60 * 1000
-      );
-
-    await user.save();
-
-    await sendOtpEmail(
-      email,
-      otp
-    );
-
-    return true;
-  };
-
-
-
-  
-
-export const forgotPassword =
-  async (email) => {
-
-    const user =
-      await User.findOne({
-        email,
-      });
-
-    if (!user) {
-      throw new ApiError(
-        404,
-        "User not found"
-      );
-    }
-
-    const otp =
-      generateOtp();
-
-    user.passwordResetOtp =
-      otp;
-
-    user.passwordResetOtpExpiresAt =
-      new Date(
-        Date.now() +
-        10 * 60 * 1000
-      );
-
-    await user.save();
-
-    await sendOtpEmail(
-      email,
-      otp
-    );
-
-    return true;
-  };
-
-  export const resetPassword =
-  async (
+export const resendVerificationOtp = async (email) => {
+  const user = await User.findOne({
     email,
-    otp,
-    password
-  ) => {
+  });
 
-    const user =
-      await User.findOne({
-        email,
-      });
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
 
-    if (!user) {
-      throw new ApiError(
-        404,
-        "User not found"
-      );
-    }
+  if (user.isVerified) {
+    throw new ApiError(400, "Email already verified");
+  }
 
-    if (
-      user.passwordResetOtp !==
-      otp
-    ) {
-      throw new ApiError(
-        400,
-        "Invalid OTP"
-      );
-    }
+  const otp = generateOtp();
 
-    if (
-      user.passwordResetOtpExpiresAt <
-      new Date()
-    ) {
-      throw new ApiError(
-        400,
-        "OTP expired"
-      );
-    }
+  user.verificationOtp = otp;
 
-    user.password = password;
+  user.verificationOtpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    user.passwordResetOtp =
-      null;
+  await user.save();
 
-    user.passwordResetOtpExpiresAt =
-      null;
+  await sendOtpEmail(email, otp);
 
-    await user.save();
+  return true;
+};
 
-    return true;
-  };
+export const forgotPassword = async (email) => {
+  const user = await User.findOne({
+    email,
+  });
 
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
 
+  const otp = generateOtp();
 
+  user.passwordResetOtp = otp;
 
-export const changeUserPassword =
-  async (
-    userId,
-    currentPassword,
-    newPassword
-  ) => {
+  user.passwordResetOtpExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
-    const user =
-      await User.findById(userId);
+  await user.save();
 
-    const isValid =
-      await user.comparePassword(
-        currentPassword
-      );
+  await sendOtpEmail(email, otp);
 
-    if (!isValid) {
-      throw new ApiError(
-        400,
-        "Current password is incorrect"
-      );
-    }
+  return true;
+};
 
-    user.password =
-      newPassword;
+export const resetPassword = async (email, otp, password) => {
+  const user = await User.findOne({
+    email,
+  });
 
-    user.refreshToken =
-      null;
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
 
-    await user.save();
+  if (user.passwordResetOtp !== otp) {
+    throw new ApiError(400, "Invalid OTP");
+  }
 
-    return true;
-  };
+  if (user.passwordResetOtpExpiresAt < new Date()) {
+    throw new ApiError(400, "OTP expired");
+  }
 
+  user.password = password;
 
-export const deleteUserAccount =
-  async (userId, password) => {
+  user.passwordResetOtp = null;
 
-    const user =
-      await User.findById(userId);
+  user.passwordResetOtpExpiresAt = null;
 
-    if (!user) {
-      throw new ApiError(
-        404,
-        "User not found"
-      );
-    }
+  await user.save();
 
-    const isValid =
-      await user.comparePassword(
-        password
-      );
+  return true;
+};
 
-    if (!isValid) {
-      throw new ApiError(
-        400,
-        "Invalid password"
-      );
-    }
+export const changeUserPassword = async (
+  userId,
+  currentPassword,
+  newPassword,
+) => {
+  const user = await User.findById(userId);
 
-    const projects =
-      await Project.find({
-        owner: userId,
-      }).select("_id");
+  const isValid = await user.comparePassword(currentPassword);
 
-    const projectIds =
-      projects.map(
-        (project) =>
-          project._id
-      );
+  if (!isValid) {
+    throw new ApiError(400, "Current password is incorrect");
+  }
 
-    await Telemetry.deleteMany({
-      project: {
-        $in: projectIds,
-      },
-    });
+  user.password = newPassword;
 
-    await Project.deleteMany({
-      owner: userId,
-    });
+  user.refreshToken = null;
 
-    await User.findByIdAndDelete(
-      userId
-    );
+  await user.save();
 
-    return true;
-  };
+  return true;
+};
+
+export const deleteUserAccount = async (userId, password) => {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  const isValid = await user.comparePassword(password);
+
+  if (!isValid) {
+    throw new ApiError(400, "Invalid password");
+  }
+
+  const projects = await Project.find({
+    owner: userId,
+  }).select("_id");
+
+  const projectIds = projects.map((project) => project._id);
+
+  await Telemetry.deleteMany({
+    project: {
+      $in: projectIds,
+    },
+  });
+
+  await Project.deleteMany({
+    owner: userId,
+  });
+
+  await User.findByIdAndDelete(userId);
+
+  return true;
+};

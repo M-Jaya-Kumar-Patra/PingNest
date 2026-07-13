@@ -5,7 +5,7 @@ const validateRequest = (schema) => {
 
         const result = schema.safeParse(req.body);
 
-        console.log(result);
+        
 
         if (!result.success) {
             return next(

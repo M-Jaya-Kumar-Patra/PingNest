@@ -22,18 +22,11 @@ export const register =
   asyncHandler(
     async (req, res) => {
 
-      console.log(
-        "REGISTER CONTROLLER START"
-      );
 
       const user =
         await registerUser(
           req.validatedData
         );
-
-      console.log(
-        "REGISTER CONTROLLER END"
-      );
 
       return res
         .status(201)
@@ -105,7 +98,7 @@ export const verifyEmail = asyncHandler(async (req, res) => {
 
 //refresh access token
 export const refreshAccessToken = asyncHandler(async (req, res) => {
-  console.log("REFRESH ENDPOINT HIT");
+  
   const incommingRefreshToken = req.cookies?.refreshToken;
 
   if (!incommingRefreshToken) {
