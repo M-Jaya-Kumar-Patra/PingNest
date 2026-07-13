@@ -52,13 +52,13 @@ export default function RegisterPage() {
         ...payload
       } = data;
 
-      await registerUser(payload);
+      const response = await registerUser(payload);
 
-      toast.success(
-        "Email sent"
-      );
+console.log(response);
 
-      router.push(
+toast.success("Email sent");
+
+router.push(
   `/verify-email?email=${payload.email}`
 );
 
