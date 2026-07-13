@@ -75,7 +75,7 @@ userSchema.methods.generateAccessToken = function () {
     },
     env.jwtAccessSecret,
     {
-      expiresIn: "10s",
+      expiresIn: "15m",
     },
   );
 };
@@ -87,7 +87,7 @@ userSchema.methods.generateRefreshToken = function () {
     },
     env.jwtRefreshSecret,
     {
-      expiresIn: "20s",
+      expiresIn: "7d",
     },
   );
 };
