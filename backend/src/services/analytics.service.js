@@ -223,3 +223,122 @@ export const getHealthScore = async (projectId, ownerId) => {
 
   return Math.round(score);
 };
+
+
+
+export const getAllRequests = async (
+  projectId,
+  ownerId,
+  query
+) => {
+  await validateProjectOwnership(
+    projectId,
+    ownerId
+  );
+
+  const {
+    page = 1,
+    limit = 20,
+    method,
+    status,
+    search,
+  } = query;
+
+  const filter = {
+    project: projectId,
+  };
+
+  if (method) {
+    filter.method = method;
+  }
+
+  if (status) {
+    filter.statusCode = {
+      $gte: Number(status),
+      $lt: Number(status) + 100,
+    };
+  }
+
+  if (search) {
+    filter.route = {
+      $regex: search,
+      $options: "i",
+    };
+  }
+
+  const skip =
+    (page - 1) * limit;
+
+  const [requests, total] =
+    await Promise.all([
+      Telemetry.find(filter)
+        .sort({
+          createdAt: -1,
+        })
+        .skip(skip)
+        .limit(Number(limit)),
+
+      Telemetry.countDocuments(
+        filter
+      ),
+    ]);
+
+  return {
+    requests,
+    pagination: {
+      total,
+      page: Number(page),
+      pages: Math.ceil(
+        total / limit
+      ),
+    },
+  };
+};
+
+
+export const getErrorDetails = async (
+  projectId,
+  ownerId
+) => {
+  const project =
+    await validateProjectOwnership(
+      projectId,
+      ownerId
+    );
+
+  const errors =
+    await Telemetry.aggregate([
+      {
+        $match: {
+          project: project._id,
+          statusCode: {
+            $gte: 400,
+          },
+        },
+      },
+      {
+        $group: {
+          _id: "$statusCode",
+
+          count: {
+            $sum: 1,
+          },
+
+          avgResponseTime: {
+            $avg: "$responseTime",
+          },
+
+          lastSeen: {
+            $max: "$createdAt",
+          },
+        },
+      },
+      {
+        $sort: {
+          count: -1,
+        },
+      },
+    ]);
+
+  return errors;
+};

@@ -12,6 +12,8 @@ import projectRoutes from "./routes/project.routes.js";
 import telemetryRoutes from "./routes/telemetry.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
 import dashboardRoutes from "./routes/dashboard.routes.js";
+import uptimeRoutes from "./routes/uptime.routes.js";
+import incidentRoutes from "./routes/incident.routes.js";
 
 const app = express();
 
@@ -28,6 +30,8 @@ app.use(express.json());
 
 app.use(cookieParser());
 
+app.use(express.urlencoded({ extended: true }));
+
 app.get("/", (req, res) => {
   res.json({
     succss: true,
@@ -40,8 +44,8 @@ app.use("/api/v1/projects", projectRoutes);
 app.use("/api/v1/telemetry", telemetryRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
-
-
+app.use("/api/v1/uptime", uptimeRoutes);
+app.use("/api/v1/incidents", incidentRoutes);
 
 app.use((req, res, next) => {
   console.log("404 middleware hit:", req.originalUrl);

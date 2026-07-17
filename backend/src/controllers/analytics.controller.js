@@ -6,6 +6,8 @@ import {
   getTopEndpoints,
   getSlowestEndpoints,
   getHealthScore,
+  getAllRequests,
+  getErrorDetails,
 } from "../services/analytics.service.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
@@ -130,3 +132,48 @@ export const healthScoreController =
      )
    );
 });
+
+
+export const allRequestsController =
+  asyncHandler(
+    async (req, res) => {
+      const data =
+        await getAllRequests(
+          req.params.projectId,
+          req.user._id,
+          req.query
+        );
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            data,
+            "Requests fetched"
+          )
+        );
+    }
+  );
+
+
+  export const errorDetailsController =
+  asyncHandler(
+    async (req, res) => {
+      const data =
+        await getErrorDetails(
+          req.params.projectId,
+          req.user._id
+        );
+
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            data,
+            "Error details fetched"
+          )
+        );
+    }
+  );

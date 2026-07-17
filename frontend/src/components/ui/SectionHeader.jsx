@@ -17,10 +17,10 @@ export default function SectionHeader({
       `}
     >
       <div>
-        <h2 className="text-xl font-semibold text-gray-950">{title}</h2>
+        <h2 className="text-xl font-semibold text-white">{title}</h2>
 
         {description ? (
-          <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-600">
+          <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-400">
             {description}
           </p>
         ) : null}

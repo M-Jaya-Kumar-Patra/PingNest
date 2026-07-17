@@ -4,421 +4,454 @@ import Card from "@/components/ui/Card";
 import CodeBlock from "@/components/ui/CodeBlock";
 
 import {
-  BookOpen,
   Terminal,
   Rocket,
   Settings,
   Activity,
+  BookOpen,
+  Server,
+  ShieldAlert,
+  Database,
 } from "lucide-react";
+
+const sections = [
+  {
+    id: "installation",
+    label: "Installation",
+  },
+  {
+    id: "quick-start",
+    label: "Quick Start",
+  },
+  {
+    id: "architecture",
+    label: "Architecture",
+  },
+  {
+    id: "configuration",
+    label: "Configuration",
+  },
+  {
+    id: "telemetry",
+    label: "Telemetry",
+  },
+  {
+    id: "monitoring",
+    label: "Monitoring",
+  },
+  {
+    id: "api",
+    label: "API Reference",
+  },
+  {
+    id: "faq",
+    label: "FAQ",
+  },
+];
 
 export default function DocsPage() {
   return (
-    <div
-      className="
-      max-w-6xl
-      mx-auto
+    <div className="flex gap-8">
+      {/* Sidebar */}
 
-      space-y-8
-      "
-    >
-      {/* Hero */}
-
-      <div
+      <aside
         className="
-        relative
+        hidden
+        lg:block
 
-        overflow-hidden
+        sticky
+        top-24
 
-        rounded-3xl
-
-        border
-        border-slate-800
-
-        bg-gradient-to-br
-        from-slate-900
-        via-slate-950
-        to-slate-950
-
-        p-6
-        md:p-8
+        h-fit
+        w-64
+        shrink-0
         "
       >
-        <div
-          className="
-          absolute
-
-          top-0
-          right-0
-
-          h-48
-          w-48
-
-          rounded-full
-
-          bg-orange-500/10
-
-          blur-3xl
-          "
-        />
-
-        <div className="relative">
+        <Card>
           <p
             className="
-            text-sm
-            font-medium
+            mb-4
 
-            text-orange-400
+            text-xs
+            uppercase
+            tracking-wider
+
+            text-slate-500
             "
           >
             Documentation
           </p>
 
-          <h1
+          <div className="space-y-2">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => {
+                  document.getElementById(section.id)?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  });
+                }}
+                className="
+  block
+  w-full
+
+  rounded-xl
+
+  px-3
+  py-2
+
+  text-left
+  text-sm
+
+  text-slate-400
+
+  transition
+
+  hover:bg-slate-900
+  hover:text-orange-400
+  "
+              >
+                {section.label}
+              </button>
+            ))}
+          </div>
+        </Card>
+      </aside>
+
+      {/* Content */}
+
+      <div className="flex-1 space-y-8">
+        {/* Hero */}
+
+        <section
+          className="
+          relative
+
+          overflow-hidden
+
+          rounded-3xl
+
+          border
+          border-slate-800
+
+          bg-gradient-to-br
+          from-slate-900
+          via-slate-950
+          to-slate-950
+
+          p-8
+          "
+        >
+          <div
             className="
-            mt-2
+            absolute
 
-            text-4xl
-            md:text-5xl
+            right-0
+            top-0
 
-            font-bold
+            h-60
+            w-60
 
-            text-white
+            rounded-full
+
+            bg-orange-500/10
+
+            blur-3xl
             "
-          >
-            PingNest Docs
-          </h1>
-
-          <p
-            className="
-            mt-4
-
-            max-w-2xl
-
-            text-slate-400
-            "
-          >
-            Monitor API traffic,
-            response times, failures,
-            and health metrics with a
-            single middleware.
-          </p>
-        </div>
-      </div>
-
-      {/* Installation */}
-
-      <Card>
-        <div className="flex items-center gap-3 mb-5">
-          <Terminal
-            size={22}
-            className="text-orange-400"
           />
 
-          <h2
-            className="
-            text-2xl
-            font-semibold
-            text-white
-            "
-          >
-            Installation
-          </h2>
-        </div>
+          <div className="relative">
+            <p className="text-sm font-medium text-orange-400">
+              PingNest Documentation
+            </p>
 
-        
+            <h1
+              className="
+              mt-3
+
+              text-5xl
+
+              font-bold
+
+              text-white
+              "
+            >
+              Observe every request.
+            </h1>
+
+            <p
+              className="
+              mt-5
+
+              max-w-3xl
+
+              text-lg
+
+              text-slate-400
+              "
+            >
+              Monitor APIs, collect telemetry, track uptime, manage incidents,
+              and visualize application health in real time.
+            </p>
+          </div>
+        </section>
+
+        {/* Installation */}
+
+        <Card id="installation" className="scroll-mt-24">
+          <div className="mb-5 flex items-center gap-3">
+            <Terminal size={22} className="text-orange-400" />
+
+            <h2 className="text-2xl font-semibold text-white">Installation</h2>
+          </div>
+
+          <CodeBlock language="bash" code={`npm install pingnest`} />
+        </Card>
+
+        {/* Quick Start */}
+
+        <Card id="quick-start" className="scroll-mt-24">
+          <div className="mb-5 flex items-center gap-3">
+            <Rocket size={22} className="text-orange-400" />
+
+            <h2 className="text-2xl font-semibold text-white">Quick Start</h2>
+          </div>
+
           <CodeBlock
-  language="bash"
-  code={`npm install pingnest`}
-/>
-      </Card>
-
-      {/* Quick Start */}
-
-      <Card>
-        <div className="flex items-center gap-3 mb-5">
-          <Rocket
-            size={22}
-            className="text-orange-400"
-          />
-
-          <h2
-            className="
-            text-2xl
-            font-semibold
-            text-white
-            "
-          >
-            Quick Start
-          </h2>
-        </div>
-
-        <CodeBlock
-  language="javascript"
-  code={`import express from "express";
+            language="javascript"
+            code={`import express from "express";
 import pingNest from "pingnest";
 
 const app = express();
 
 app.use(
   pingNest({
-    apiKey: "pn_live_xxxxxxxxx",
-    service: "user-service"
+    apiKey: "pn_live_xxxxx",
+    service: "auth-service",
   })
 );
 
 app.listen(5000);`}
-/>
-      </Card>
-
-      {/* Configuration */}
-
-      <Card>
-        <div className="flex items-center gap-3 mb-5">
-          <Settings
-            size={22}
-            className="text-orange-400"
           />
+        </Card>
 
-          <h2
+        {/* Architecture */}
+
+        <Card id="architecture" className="scroll-mt-24">
+          <div className="mb-5 flex items-center gap-3">
+            <Database size={22} className="text-orange-400" />
+
+            <h2 className="text-2xl font-semibold text-white">Architecture</h2>
+          </div>
+
+          <pre
             className="
-            text-2xl
-            font-semibold
-            text-white
+            overflow-x-auto
+
+            rounded-xl
+
+            bg-slate-950
+
+            p-6
+
+            text-orange-400
             "
           >
-            Configuration Options
-          </h2>
-        </div>
+            {`Application
+      |
+      v
+PingNest SDK
+      |
+      v
+Telemetry API
+      |
+      v
+MongoDB
+      |
+      v
+Realtime Dashboard`}
+          </pre>
+        </Card>
 
-        <div className="overflow-x-auto">
-          <table
-            className="
-            w-full
+        {/* Configuration */}
 
-            border-collapse
-            "
-          >
+        <Card id="configuration" className="scroll-mt-24">
+          <div className="mb-5 flex items-center gap-3">
+            <Settings size={22} className="text-orange-400" />
+
+            <h2 className="text-2xl font-semibold text-white">Configuration</h2>
+          </div>
+
+          <table className="w-full">
             <thead>
-              <tr
-                className="
-                border-b
-                border-slate-800
-                "
-              >
-                <th className="py-3 text-left text-slate-300">
-                  Option
-                </th>
+              <tr className="border-b border-slate-800">
+                <th className="py-3 text-left text-slate-300">Option</th>
 
-                <th className="py-3 text-left text-slate-300">
-                  Type
-                </th>
+                <th className="py-3 text-left text-slate-300">Type</th>
 
-                <th className="py-3 text-left text-slate-300">
-                  Required
-                </th>
+                <th className="py-3 text-left text-slate-300">Required</th>
 
-                <th className="py-3 text-left text-slate-300">
-                  Description
-                </th>
+                <th className="py-3 text-left text-slate-300">Description</th>
               </tr>
             </thead>
 
             <tbody>
               {[
-                [
-                  "apiKey",
-                  "string",
-                  "Yes",
-                  "Project API Key",
-                ],
-                [
-                  "service",
-                  "string",
-                  "Yes",
-                  "Service Name",
-                ],
-                [
-                  "endpoint",
-                  "string",
-                  "No",
-                  "Custom ingestion endpoint",
-                ],
-                [
-                  "ignoreRoutes",
-                  "string[]",
-                  "No",
-                  "Routes to ignore",
-                ],
+                ["apiKey", "string", "Yes", "Project API Key"],
+                ["service", "string", "Yes", "Service Name"],
+                ["endpoint", "string", "No", "Custom endpoint"],
+                ["ignoreRoutes", "string[]", "No", "Ignored routes"],
               ].map((row) => (
-                <tr
-                  key={row[0]}
-                  className="
-                  border-b
-                  border-slate-800
-                  "
-                >
-                  <td className="py-4 text-orange-400">
-                    {row[0]}
-                  </td>
+                <tr key={row[0]} className="border-b border-slate-800">
+                  <td className="py-4 text-orange-400">{row[0]}</td>
 
-                  <td className="py-4 text-slate-300">
-                    {row[1]}
-                  </td>
+                  <td className="py-4 text-slate-300">{row[1]}</td>
 
-                  <td className="py-4 text-slate-300">
-                    {row[2]}
-                  </td>
+                  <td className="py-4 text-slate-300">{row[2]}</td>
 
-                  <td className="py-4 text-slate-400">
-                    {row[3]}
-                  </td>
+                  <td className="py-4 text-slate-400">{row[3]}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      </Card>
+        </Card>
 
-      {/* Ignore Routes */}
+        {/* Telemetry */}
 
-      <Card>
-        <h2
-          className="
-          text-2xl
-          font-semibold
+        <Card id="telemetry" className="scroll-mt-24">
+          <div className="mb-5 flex items-center gap-3">
+            <Activity size={22} className="text-orange-400" />
 
-          text-white
+            <h2 className="text-2xl font-semibold text-white">
+              Example Telemetry
+            </h2>
+          </div>
 
-          mb-5
-          "
-        >
-          Ignore Routes
-        </h2>
-
-        <CodeBlock
-  language="javascript"
-  code={`app.use(
-  pingNest({
-    apiKey: "pn_live_xxx",
-    service: "auth-service",
-
-    ignoreRoutes: [
-      "/health",
-      "/favicon.ico"
-    ]
-  })
-);`}
-/>
-      </Card>
-
-      {/* Dashboard Features */}
-
-      <Card>
-        <div className="flex items-center gap-3 mb-5">
-          <Activity
-            size={22}
-            className="text-orange-400"
-          />
-
-          <h2
-            className="
-            text-2xl
-            font-semibold
-
-            text-white
-            "
-          >
-            Dashboard Features
-          </h2>
-        </div>
-
-        <div
-          className="
-          grid
-
-          gap-4
-
-          md:grid-cols-2
-          "
-        >
-          {[
-            "Real-Time Telemetry",
-            "Response Time Tracking",
-            "Error Analytics",
-            "Endpoint Monitoring",
-            "Health Score",
-            "Live Updates",
-          ].map((feature) => (
-            <div
-              key={feature}
-              className="
-              rounded-xl
-
-              border
-              border-slate-800
-
-              bg-slate-950
-
-              p-4
-
-              text-slate-300
-              "
-            >
-              {feature}
-            </div>
-          ))}
-        </div>
-      </Card>
-
-      {/* Example Telemetry */}
-
-      <Card>
-        <div className="flex items-center gap-3 mb-5">
-          <BookOpen
-            size={22}
-            className="text-orange-400"
-          />
-
-          <h2
-            className="
-            text-2xl
-            font-semibold
-
-            text-white
-            "
-          >
-            Example Telemetry
-          </h2>
-        </div>
-
-        <pre
-          className="
-          overflow-x-auto
-
-          rounded-2xl
-
-          border
-          border-slate-800
-
-          bg-slate-950
-
-          p-5
-
-          text-sm
-          text-orange-400
-          "
-        >
-{`{
-  route: "/users",
-  method: "GET",
-  statusCode: 200,
-  responseTime: 142,
-  service: "user-service",
-  timestamp:
-    "2026-07-13T10:00:00Z"
+          <CodeBlock
+            language="json"
+            code={`{
+  "route": "/users",
+  "method": "GET",
+  "statusCode": 200,
+  "responseTime": 142,
+  "service": "user-service",
+  "timestamp": "2026-07-13T10:00:00Z"
 }`}
-        </pre>
-      </Card>
+          />
+        </Card>
+
+        {/* Monitoring */}
+
+        <Card id="monitoring" className="scroll-mt-24">
+          <div className="mb-5 flex items-center gap-3">
+            <ShieldAlert size={22} className="text-orange-400" />
+
+            <h2 className="text-2xl font-semibold text-white">
+              Monitoring & Incidents
+            </h2>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            {[
+              "Uptime Monitoring",
+              "Incident Creation",
+              "Incident Resolution",
+              "Latency Tracking",
+              "Health Metrics",
+              "Realtime Updates",
+            ].map((item) => (
+              <div
+                key={item}
+                className="
+                rounded-xl
+
+                border
+                border-slate-800
+
+                bg-slate-950
+
+                p-4
+
+                text-slate-300
+                "
+              >
+                {item}
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        {/* API */}
+
+        <Card id="api" className="scroll-mt-24">
+          <div className="mb-5 flex items-center gap-3">
+            <Server size={22} className="text-orange-400" />
+
+            <h2 className="text-2xl font-semibold text-white">API Reference</h2>
+          </div>
+
+          <CodeBlock
+            language="http"
+            code={`POST /api/v1/telemetry
+
+Headers:
+Authorization: Bearer API_KEY
+
+Content-Type: application/json`}
+          />
+        </Card>
+
+        {/* FAQ */}
+
+        <Card id="faq" className="scroll-mt-24">
+          <div className="mb-5 flex items-center gap-3">
+            <BookOpen size={22} className="text-orange-400" />
+
+            <h2 className="text-2xl font-semibold text-white">
+              Frequently Asked Questions
+            </h2>
+          </div>
+
+          <div className="space-y-5">
+            <div>
+              <h3 className="font-medium text-white">
+                Does PingNest support realtime updates?
+              </h3>
+
+              <p className="mt-2 text-slate-400">
+                Yes. Telemetry and monitoring updates are streamed via
+                Socket.IO.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-medium text-white">
+                Can I monitor external APIs?
+              </h3>
+
+              <p className="mt-2 text-slate-400">
+                Yes. Create uptime monitors using any public URL.
+              </p>
+            </div>
+          </div>
+        </Card>
+
+        {/* CTA */}
+
+        <Card>
+          <div className="text-center">
+            <h2 className="text-3xl font-bold text-white">
+              Ready to get started?
+            </h2>
+
+            <p className="mt-3 text-slate-400">
+              Create a project, copy your API key and start collecting telemetry
+              in minutes.
+            </p>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 }

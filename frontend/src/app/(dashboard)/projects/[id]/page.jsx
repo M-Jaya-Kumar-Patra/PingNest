@@ -34,6 +34,7 @@ import QuickStartCard from "@/components/projects/QuickStartCard";
 
 import { Copy, Check } from "lucide-react";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
@@ -220,7 +221,7 @@ export default function ProjectDetailPage() {
   return (
     <div className="space-y-6">
       <div
-  className="
+        className="
   relative
 
   overflow-hidden
@@ -238,9 +239,9 @@ export default function ProjectDetailPage() {
   p-6
   md:p-8
   "
->
-  <div
-    className="
+      >
+        <div
+          className="
     absolute
 
     top-0
@@ -255,22 +256,22 @@ export default function ProjectDetailPage() {
 
     blur-3xl
     "
-  />
+        />
 
-  <div className="relative">
-    <p
-      className="
+        <div className="relative">
+          <p
+            className="
       text-sm
       font-medium
 
       text-orange-400
       "
-    >
-      Project Dashboard
-    </p>
+          >
+            Project Dashboard
+          </p>
 
-    <h1
-      className="
+          <h1
+            className="
       mt-2
 
       text-3xl
@@ -280,23 +281,166 @@ export default function ProjectDetailPage() {
 
       text-white
       "
-    >
-      {project.name}
-    </h1>
+          >
+            {project.name}
+          </h1>
 
-    <p
-      className="
+          <p
+            className="
       mt-3
 
       text-slate-400
       "
-    >
-      {project.description}
-    </p>
-  </div>
-</div>  
+          >
+            {project.description}
+          </p>
+          <div
+            className="
+  mt-6
 
-      <div className="grid md:grid-cols-4 gap-4">
+  flex
+  flex-wrap
+  gap-3
+  "
+          >
+            <Link
+              href={`/projects/${project._id}/requests`}
+              className="
+    inline-flex
+    items-center
+
+    rounded-xl
+
+    bg-orange-500
+
+    px-5
+    py-2.5
+
+    font-medium
+    text-white
+
+    hover:bg-orange-400
+
+    transition
+    "
+            >
+              Request Explorer
+            </Link>
+
+            
+            <Link
+              href={`/projects/${project._id}/uptime`}
+              className="
+  inline-flex
+  items-center
+
+  rounded-xl
+
+  border
+  border-slate-700
+
+  px-5
+  py-2.5
+
+  text-slate-300
+
+  hover:border-orange-500
+  hover:text-orange-400
+
+  transition
+  "
+            >
+              Monitors
+            </Link>
+
+            <Link
+              href={`/projects/${project._id}/incident`}
+              className="
+  inline-flex
+  items-center
+
+  rounded-xl
+
+  border
+  border-slate-700
+
+  px-5
+  py-2.5
+
+  text-slate-300
+
+  hover:border-orange-500
+  hover:text-orange-400
+
+  transition
+  "
+            >
+              Incidents
+            </Link>
+
+<Link
+              href={`/projects/${project._id}/errors`}
+              className="
+    inline-flex
+    items-center
+
+    rounded-xl
+
+    border
+    border-slate-700
+
+    px-5
+    py-2.5
+
+    text-slate-300
+
+    hover:border-orange-500
+    hover:text-orange-400
+
+    transition
+    "
+            >
+              Error Center
+            </Link>
+
+
+            <Link
+              href={`/projects/${project._id}/settings`}
+              className="
+    inline-flex
+    items-center
+
+    rounded-xl
+
+    border
+    border-slate-700
+
+    px-5
+    py-2.5
+
+    text-slate-300
+
+    hover:border-orange-500
+    hover:text-orange-400
+
+    transition
+    "
+            >
+              Settings
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="
+  grid
+  gap-4
+
+  md:grid-cols-2
+  xl:grid-cols-4
+  "
+      >
         <StatCard title="Total Requests" value={summary.totalRequests} />
 
         <StatCard
@@ -315,9 +459,22 @@ export default function ProjectDetailPage() {
         />
       </div>
 
-      <Card>
-  <div
-    className="
+      <HealthScoreCard score={healthScore} />
+
+      {summary.totalRequests === 0 && (
+        <>
+          <h2
+            className="
+      text-2xl
+      font-bold
+      text-white
+      "
+          >
+            Developer Setup
+          </h2>
+          <Card>
+            <div
+              className="
     flex
     flex-col
     gap-4
@@ -326,36 +483,36 @@ export default function ProjectDetailPage() {
     md:items-center
     md:justify-between
     "
-  >
-    <div>
-      <h2
-        className="
+            >
+              <div>
+                <h2
+                  className="
         text-lg
         font-semibold
 
         text-white
         "
-      >
-        API Key
-      </h2>
+                >
+                  API Key
+                </h2>
 
-      <p
-        className="
+                <p
+                  className="
         mt-1
 
         text-sm
 
         text-slate-400
         "
-      >
-        Use this key to connect your SDK.
-      </p>
-    </div>
+                >
+                  Use this key to connect your SDK.
+                </p>
+              </div>
 
-    <div className="flex gap-2">
-      <button
-        onClick={handleCopyApiKey}
-        className="
+              <div className="flex gap-2">
+                <button
+                  onClick={handleCopyApiKey}
+                  className="
         rounded-xl
 
         border
@@ -369,14 +526,14 @@ export default function ProjectDetailPage() {
         hover:border-orange-500
         hover:text-orange-400
         "
-      >
-        {copied ? "Copied" : "Copy"}
-      </button>
+                >
+                  {copied ? "Copied" : "Copy"}
+                </button>
 
-      <button
-        onClick={handleRegenerateApiKey}
-        disabled={regenerating}
-        className="
+                <button
+                  onClick={handleRegenerateApiKey}
+                  disabled={regenerating}
+                  className="
         rounded-xl
 
         bg-orange-500
@@ -388,16 +545,14 @@ export default function ProjectDetailPage() {
 
         hover:bg-orange-400
         "
-      >
-        {regenerating
-          ? "Generating..."
-          : "Regenerate"}
-      </button>
-    </div>
-  </div>
+                >
+                  {regenerating ? "Generating..." : "Regenerate"}
+                </button>
+              </div>
+            </div>
 
-  <div
-    className="
+            <div
+              className="
     mt-5
 
     rounded-2xl
@@ -409,79 +564,81 @@ export default function ProjectDetailPage() {
 
     p-4
     "
-  >
-    <code
-      className="
+            >
+              <code
+                className="
       break-all
 
       text-sm
 
       text-orange-400
       "
-    >
-      {project.apiKey}
-    </code>
-  </div>
-</Card>
+              >
+                {project.apiKey}
+              </code>
+            </div>
+          </Card>
+
+          <QuickStartCard apiKey={project.apiKey} />
+        </>
+      )}
 
       {requests.length === 0 ? (
-
-<Card className="text-center py-10">
-
-    <h2
-      className="
+        <Card className="text-center py-10">
+          <h2
+            className="
       text-lg
       font-semibold
       mb-2
       "
-    >
-      No Telemetry Yet
-    </h2>
+          >
+            No Telemetry Yet
+          </h2>
 
-    <p
-      className="
+          <p
+            className="
       text-slate-400
       "
-    >
-      Copy your API key,
-      install the SDK,
-      and start sending requests.
-    </p>
+          >
+            Copy your API key, install the SDK, and start sending requests.
+          </p>
+        </Card>
+      ) : (
+        <>
+          <h2
+            className="
+  text-2xl
+  font-bold
+  text-white
+  "
+          >
+            Traffic Analytics
+          </h2>
+          <RecentRequestsTable requests={requests} />
 
-  </Card>
+          <TopEndpointsChart data={topEndpoints} />
 
-) : (
+          <RequestsTimelineChart data={timeline} />
 
-  <>
-    <RecentRequestsTable
-      requests={requests}
-    />
+          <h2
+            className="
+  text-2xl
+  font-bold
+  text-white
+  "
+          >
+            Reliability
+          </h2>
 
-    <TopEndpointsChart
-      data={topEndpoints}
-    />
+          <ErrorDistributionChart data={errorData} />
 
-    <RequestsTimelineChart
-      data={timeline}
-    />
+          <SlowestEndpointsTable data={slowestEndpoints} />
+        </>
+      )}
 
-    <ErrorDistributionChart
-      data={errorData}
-    />
-
-    <SlowestEndpointsTable
-      data={slowestEndpoints}
-    />
-
-    <HealthScoreCard
-      score={healthScore}
-    />
-  </>
-
-)}
       <Card>
-  <div
-    className="
+        <div
+          className="
     flex
     flex-col
 
@@ -491,33 +648,33 @@ export default function ProjectDetailPage() {
     md:items-center
     md:justify-between
     "
-  >
-    <div>
-      <h2
-        className="
+        >
+          <div>
+            <h2
+              className="
         text-lg
         font-semibold
 
         text-red-400
         "
-      >
-        Danger Zone
-      </h2>
+            >
+              Danger Zone
+            </h2>
 
-      <p
-        className="
+            <p
+              className="
         mt-1
 
         text-slate-400
         "
-      >
-        Permanently delete this project and all telemetry data.
-      </p>
-    </div>
+            >
+              Permanently delete this project and all telemetry data.
+            </p>
+          </div>
 
-    <button
-      onClick={handleDeleteProject}
-      className="
+          <button
+            onClick={handleDeleteProject}
+            className="
       rounded-xl
 
       bg-red-600
@@ -529,11 +686,11 @@ export default function ProjectDetailPage() {
 
       hover:bg-red-500
       "
-    >
-      Delete Project
-    </button>
-  </div>
-</Card>
+          >
+            Delete Project
+          </button>
+        </div>
+      </Card>
     </div>
   );
 }

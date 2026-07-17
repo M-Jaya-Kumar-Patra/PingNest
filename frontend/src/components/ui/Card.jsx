@@ -1,9 +1,7 @@
-export default function Card({
-  children,
-  className = "",
-}) {
+export default function Card({ children, className = "", ...props }) {
   return (
     <div
+      {...props}
       className={`
         rounded-3xl
 

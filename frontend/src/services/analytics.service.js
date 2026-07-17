@@ -20,3 +20,11 @@ export const getSlowestEndpoints = (projectId) =>
 
 export const getHealthScore = (projectId) =>
   api.get(`/analytics/${projectId}/health-score`);
+
+export const getAllRequests = (projectId, params) =>
+  api.get(`/analytics/${projectId}/requests`, {
+    params,
+  });
+
+export const getErrorDetails = (projectId) =>
+  api.get(`/analytics/${projectId}/errors`);

@@ -6,6 +6,7 @@ import { connectDB } from "./config/database.js";
 
 import { initializeSocket } from "./sockets/socket.js";
 
+import { startUptimeMonitorJob } from "./jobs/uptimeMonitor.job.js";
 
 const PORT = env.port || 5000;
 
@@ -13,6 +14,7 @@ const server = http.createServer(app)
 
 connectDB().then(()=>{
     initializeSocket(server);
+    startUptimeMonitorJob();
     server.listen(PORT, ()=>{
         console.log(`Server running on port: ${PORT}`);
     });

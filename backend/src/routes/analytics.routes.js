@@ -3,7 +3,9 @@ import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 import {
+  allRequestsController,
   dashboardSummaryController,
+  errorDetailsController,
   errorDistributionController,
   healthScoreController,
   recentRequestsController,
@@ -24,5 +26,7 @@ router.get("/:projectId/error-distribution", errorDistributionController);
 router.get("/:projectId/requests-timeline", requestsTimelineController);
 router.get("/:projectId/slowest-endpoints", slowestEndpointsController);
 router.get("/:projectId/health-score", healthScoreController);
+router.get("/:projectId/requests", allRequestsController);
+router.get("/:projectId/errors", errorDetailsController);
 
 export default router;

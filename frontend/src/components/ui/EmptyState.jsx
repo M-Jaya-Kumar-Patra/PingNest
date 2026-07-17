@@ -19,19 +19,25 @@ export default function EmptyState({
     >
       <div
         className="
-        mb-4
+  mb-4
 
-        h-12
-        w-12
+  h-14
+  w-14
 
-        rounded-xl
+  rounded-2xl
 
-        border
-        border-orange-500/20
+  border
+  border-orange-500/20
 
-        bg-orange-500/10
-        "
-      />
+  bg-orange-500/10
+
+  flex
+  items-center
+  justify-center
+  "
+      >
+        🚀
+      </div>
 
       <h3
         className="
