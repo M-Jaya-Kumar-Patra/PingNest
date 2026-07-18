@@ -63,7 +63,7 @@ const [saving, setSaving] =
           const projectData =
   res.data.data;
 
-console.log(res.data);
+console.log("--------------->", res.data);
 
 setProject(projectData);
 
@@ -88,9 +88,9 @@ setDescription(
     }
   }, [id]);
 
-  const hasChanges =
-  name !== project.name ||
-  description !== (project.description || "");
+  console.log("project: ", project)
+
+  
 
   const handleCopyApiKey =
     async () => {
@@ -223,6 +223,10 @@ setDescription(
       <Loader text="Loading settings..." />
     );
   }
+
+  const hasChanges =
+  name !== project.name ||
+  description !== (project.description || "");
 
   return (
     <div className="space-y-6">
