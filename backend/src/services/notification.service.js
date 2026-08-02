@@ -31,6 +31,14 @@ const THRESHOLDS = {
   healthScore: 80,
 };
 
+const formatEmailDateTime = (date = new Date()) =>
+  date.toLocaleString("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+    timeZoneName: "short",
+  });
+
 const EMAIL_COOLDOWNS = {
   serviceDownAlerts: ONE_DAY,
   serviceRestoredAlerts: ONE_HOUR,
@@ -117,7 +125,9 @@ export const notifyIncidentCreated = async ({ projectId, monitor, incident }) =>
     serviceName: monitor?.name,
     severity: incident.severity,
     status: incident.status,
-    incidentTime: incident.createdAt?.toLocaleString("en-US"),
+    incidentTime: incident.createdAt
+      ? formatEmailDateTime(incident.createdAt)
+      : undefined,
     message: incident.description || incident.title,
   };
 
@@ -146,7 +156,9 @@ export const notifyServiceRestored = ({ projectId, monitor, incident }) =>
       serviceName: monitor?.name,
       severity: "resolved",
       status: "Restored",
-      incidentTime: incident?.resolvedAt?.toLocaleString("en-US"),
+      incidentTime: incident?.resolvedAt
+        ? formatEmailDateTime(incident.resolvedAt)
+        : undefined,
       responseTime: monitor?.lastResponseTime
         ? `${monitor.lastResponseTime} ms`
         : undefined,

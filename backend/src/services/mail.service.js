@@ -32,11 +32,14 @@ const dashboardUrl = `${websiteUrl}/dashboard`;
 const docsUrl = `${websiteUrl}/docs`;
 const loginUrl = `${websiteUrl}/login`;
 const supportEmail = env.supportEmail;
+const emailTimeZone = "Asia/Kolkata";
 
 const formatDateTime = (date = new Date()) =>
   date.toLocaleString("en-US", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: emailTimeZone,
+    timeZoneName: "short",
   });
 
 const sendEmail = async ({ to, subject, template }) => {

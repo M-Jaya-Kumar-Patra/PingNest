@@ -40,6 +40,14 @@ const badge = (severity) =>
     severity || "critical",
   );
 
+const formatFallbackTime = () =>
+  new Date().toLocaleString("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+    timeZoneName: "short",
+  });
+
 const MonitoringEmail = ({
   title,
   preview,
@@ -79,7 +87,7 @@ const MonitoringEmail = ({
         [
           text(`Project: ${projectName || "Not provided"}`, "project"),
           text(`Service: ${serviceName || "Not provided"}`, "service"),
-          text(`Incident time: ${incidentTime || new Date().toLocaleString("en-US")}`, "time"),
+          text(`Incident time: ${incidentTime || formatFallbackTime()}`, "time"),
           text(`Current status: ${status || "Investigating"}`, "status"),
           text(`Response time: ${responseTime || "Not available"}`, "responseTime"),
           message && text(`Details: ${message}`, "message"),
