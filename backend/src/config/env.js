@@ -13,7 +13,7 @@ export const env = {
 
   nodeEnv: process.env.NODE_ENV || "development",
 
-  emailUser: process.env.EMAIL_USER,
+  resendApiKey: process.env.RESEND_API_KEY,
 
-  emailPass: process.env.EMAIL_PASS,
+  emailFrom: process.env.EMAIL_FROM
 };

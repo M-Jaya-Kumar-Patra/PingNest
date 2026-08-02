@@ -1,26 +1,26 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 import { env } from "../config/env.js";
 
-export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-
-  family: 4,
-
-  auth: {
-    user: env.emailUser,
-    pass: env.emailPass,
-  },
-});
+const resend = new Resend(env.resendApiKey);
 
 export const sendOtpEmail = async (email, otp) => {
-  await transporter.verify();
-
-  const info = await transporter.sendMail({
-    from: env.emailUser,
+  const { data, error } = await resend.emails.send({
+    from: env.emailFrom,
     to: email,
     subject: "PingNest Verification OTP",
-    html: `<h1>${otp}</h1>`,
+    html: `
+      <div style="font-family: Arial, sans-serif; text-align: center;">
+        <h2>PingNest Verification</h2>
+        <p>Your verification code is:</p>
+        <h1 style="letter-spacing: 6px;">${otp}</h1>
+        <p>This OTP is valid for 10 minutes.</p>
+      </div>
+    `,
   });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data;
 };

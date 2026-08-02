@@ -17,21 +17,16 @@ export const registerUser = async (userData) => {
 
   const otp = generateOtp();
 
-  // await sendOtpEmail(
-  //   email,
-  //   otp
-  // );
+await sendOtpEmail(email, otp);
 
-  const user = await User.create({
-    name,
-    email,
-    password,
+const user = await User.create({
+  name,
+  email,
+  password,
 
-    // verificationOtp:
-    //   otp,
-
-    verificationOtpExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
-  });
+  verificationOtp: otp,
+  verificationOtpExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
+});
 
   const safeUser = await User.findById(user._id).select(
     "-password -refreshToken -verificationOtp",

@@ -43,7 +43,9 @@ export default function RegisterPage() {
 
       await registerUser(payload);
 
-      router.push("/login");
+      router.push(
+  `/verify-email?email=${encodeURIComponent(payload.email)}`
+);
     } catch (error) {
       setAuthError(
         error?.response?.data?.message ||
