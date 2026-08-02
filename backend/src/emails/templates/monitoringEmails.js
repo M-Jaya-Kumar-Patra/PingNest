@@ -41,12 +41,14 @@ const badge = (severity) =>
   );
 
 const formatFallbackTime = () =>
-  new Date().toLocaleString("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
+  `${new Date().toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
     timeZone: "Asia/Kolkata",
-    timeZoneName: "short",
-  });
+  })} IST`;
 
 const MonitoringEmail = ({
   title,

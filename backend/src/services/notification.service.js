@@ -32,12 +32,14 @@ const THRESHOLDS = {
 };
 
 const formatEmailDateTime = (date = new Date()) =>
-  date.toLocaleString("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
+  `${date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
     timeZone: "Asia/Kolkata",
-    timeZoneName: "short",
-  });
+  })} IST`;
 
 const EMAIL_COOLDOWNS = {
   serviceDownAlerts: ONE_DAY,
@@ -101,7 +103,7 @@ const sendProjectNotification = async ({
       ...data,
     });
 
-    if (stateField) {
+    if (stateField && result) {
       await Project.updateOne(
         { _id: project._id },
         {

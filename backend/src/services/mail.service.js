@@ -35,12 +35,14 @@ const supportEmail = env.supportEmail;
 const emailTimeZone = "Asia/Kolkata";
 
 const formatDateTime = (date = new Date()) =>
-  date.toLocaleString("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
+  `${date.toLocaleString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
     timeZone: emailTimeZone,
-    timeZoneName: "short",
-  });
+  })} IST`;
 
 const sendEmail = async ({ to, subject, template }) => {
   try {
