@@ -1,0 +1,20 @@
+{
+  "name": "PingNest",
+  "short_name": "PingNest",
+  "icons": [
+    {
+      "src": "/pingnest-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#020617",
+  "background_color": "#020617",
+  "display": "standalone"
+}

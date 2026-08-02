@@ -1,4 +1,9 @@
 import Incident from "../models/incident.model.js";
+import UptimeMonitor from "../models/uptimeMonitor.model.js";
+import {
+  notifyIncidentCreated,
+  notifyServiceRestored,
+} from "./notification.service.js";
 
 export const createIncident = async ({
   projectId,
@@ -7,13 +12,27 @@ export const createIncident = async ({
   description,
   severity,
 }) => {
-  return await Incident.create({
+  const incident = await Incident.create({
     project: projectId,
     monitor: monitorId,
     title,
     description,
     severity,
   });
+
+  try {
+    const monitor = await UptimeMonitor.findById(monitorId);
+
+    await notifyIncidentCreated({
+      projectId,
+      monitor,
+      incident,
+    });
+  } catch (error) {
+    console.error("Incident notification failed:", error.message);
+  }
+
+  return incident;
 };
 
 export const resolveIncident = async (monitorId) => {
@@ -29,6 +48,18 @@ export const resolveIncident = async (monitorId) => {
   incident.resolvedAt = new Date();
 
   await incident.save();
+
+  try {
+    const monitor = await UptimeMonitor.findById(monitorId);
+
+    await notifyServiceRestored({
+      projectId: incident.project,
+      monitor,
+      incident,
+    });
+  } catch (error) {
+    console.error("Service restored notification failed:", error.message);
+  }
 
   return incident;
 };

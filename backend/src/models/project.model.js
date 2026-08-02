@@ -1,5 +1,61 @@
 import mongoose from "mongoose";
 
+const notificationPreferencesSchema = new mongoose.Schema(
+  {
+    incidentAlerts: {
+      type: Boolean,
+      default: true,
+    },
+    serviceDownAlerts: {
+      type: Boolean,
+      default: true,
+    },
+    serviceRestoredAlerts: {
+      type: Boolean,
+      default: true,
+    },
+    highResponseTimeAlerts: {
+      type: Boolean,
+      default: true,
+    },
+    highErrorRateAlerts: {
+      type: Boolean,
+      default: true,
+    },
+    healthScoreWarnings: {
+      type: Boolean,
+      default: true,
+    },
+    dailySummary: {
+      type: Boolean,
+      default: false,
+    },
+    weeklySummary: {
+      type: Boolean,
+      default: true,
+    },
+    monthlyReport: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  { _id: false },
+);
+
+const notificationStateSchema = new mongoose.Schema(
+  {
+    serviceDownAlertSentAt: Date,
+    serviceRestoredAlertSentAt: Date,
+    highResponseTimeAlertSentAt: Date,
+    highErrorRateAlertSentAt: Date,
+    healthScoreWarningSentAt: Date,
+    dailySummarySentAt: Date,
+    weeklySummarySentAt: Date,
+    monthlyReportSentAt: Date,
+  },
+  { _id: false },
+);
+
 const projectSchema = new mongoose.Schema(
   {
     name: {
@@ -37,6 +93,16 @@ const projectSchema = new mongoose.Schema(
       type: String,
       enum: ["active", "inactive"],
       default: "active",
+    },
+
+    notificationPreferences: {
+      type: notificationPreferencesSchema,
+      default: () => ({}),
+    },
+
+    notificationState: {
+      type: notificationStateSchema,
+      default: () => ({}),
     },
   },
   { timestamps: true }
