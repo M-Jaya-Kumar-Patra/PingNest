@@ -15,5 +15,11 @@ export const env = {
 
   resendApiKey: process.env.RESEND_API_KEY,
 
-  emailFrom: process.env.EMAIL_FROM
+  emailFrom: process.env.EMAIL_FROM,
+
+  frontendUrl:
+    process.env.FRONTEND_URL ||
+    (process.env.NODE_ENV === "production" ? "" : "http://localhost:3000"),
+
+  supportEmail: process.env.SUPPORT_EMAIL,
 };

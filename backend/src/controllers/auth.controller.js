@@ -1,6 +1,6 @@
 import asyncHandler from "../utils/asyncHandler.js";
 import ApiResponse from "../utils/ApiResponse.js";
-import { forgotPassword, logoutUser, registerUser, resetPassword, changeUserPassword, deleteUserAccount } from "../services/auth.service.js";
+import { forgotPassword, logoutUser, registerUser, resetPassword, changeUserPassword, deleteUserAccount, verifyPasswordResetOtp } from "../services/auth.service.js";
 import {
   accessCookieOptions,
   refreshCookieOptions,
@@ -13,6 +13,7 @@ import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import { env } from "../config/env.js";
 import {resendVerificationOtp} from "../services/auth.service.js";
+import { sendWelcomeEmail } from "../services/mail.service.js";
 
 
 
@@ -90,6 +91,8 @@ export const verifyEmail = asyncHandler(async (req, res) => {
   user.verificationOtpExpiresAt = null;
 
   await user.save();
+
+  await sendWelcomeEmail(user.email, user.name);
 
   return res
     .status(200)
@@ -187,6 +190,33 @@ export const resendOtp =
           200,
           null,
           "Password reset OTP sent"
+        )
+      );
+  });
+
+  export const verifyResetOtpController =
+  asyncHandler(async (
+    req,
+    res
+  ) => {
+
+    const {
+      email,
+      otp,
+    } = req.body;
+
+    await verifyPasswordResetOtp(
+      email,
+      otp
+    );
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          null,
+          "OTP verified successfully"
         )
       );
   });

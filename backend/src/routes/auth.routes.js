@@ -7,6 +7,7 @@ import {
   verifyEmail,
   resendOtp,
   forgotPasswordController,
+  verifyResetOtpController,
   resetPasswordController,
   changePassword,
   deleteAccount,
@@ -28,6 +29,7 @@ router.post("/logout", verifyJWT, logout);
 router.post("/verify-email", verifyEmail);
 router.post("/resend-verification-otp", resendOtp);
 router.post("/forgot-password", forgotPasswordController);
+router.post("/verify-reset-otp", verifyResetOtpController);
 router.post("/reset-password", resetPasswordController);
 router.patch("/change-password", verifyJWT, changePassword);
 
