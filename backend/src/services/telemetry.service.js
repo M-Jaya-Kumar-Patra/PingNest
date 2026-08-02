@@ -2,6 +2,7 @@ import Project from "../models/project.model.js";
 import Telemetry from "../models/telemetry.model.js";
 import ApiError from "../utils/ApiError.js";
 import { getIO } from "../sockets/socket.js";
+import { evaluateTelemetryNotifications } from "./notification.service.js";
 
 export const ingestTelemetry = async (payload) => {
   const project = await Project.findOne({
@@ -27,6 +28,10 @@ export const ingestTelemetry = async (payload) => {
   });
 
   getIO().to(project._id.toString()).emit("telemetry:new", telemetry);
+
+  evaluateTelemetryNotifications(project._id).catch((error) => {
+    console.error("Telemetry notification failed:", error.message);
+  });
 
   return telemetry;
 };

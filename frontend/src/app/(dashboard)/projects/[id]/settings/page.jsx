@@ -18,12 +18,34 @@ import QuickStartCard from "@/components/projects/QuickStartCard";
 import toast from "react-hot-toast";
 
 import {
-  Copy,
-  RefreshCw,
   Trash2,
-  FolderKanban,
   KeyRound,
+  Bell,
 } from "lucide-react";
+
+const defaultNotificationPreferences = {
+  incidentAlerts: true,
+  serviceDownAlerts: true,
+  serviceRestoredAlerts: true,
+  highResponseTimeAlerts: true,
+  highErrorRateAlerts: true,
+  healthScoreWarnings: true,
+  dailySummary: false,
+  weeklySummary: true,
+  monthlyReport: true,
+};
+
+const notificationOptions = [
+  ["incidentAlerts", "Incident alerts"],
+  ["serviceDownAlerts", "Service down alerts"],
+  ["serviceRestoredAlerts", "Service restored alerts"],
+  ["highResponseTimeAlerts", "High response time alerts"],
+  ["highErrorRateAlerts", "High error rate alerts"],
+  ["healthScoreWarnings", "Health score warnings"],
+  ["dailySummary", "Daily summary"],
+  ["weeklySummary", "Weekly summary"],
+  ["monthlyReport", "Monthly report"],
+];
 
 export default function ProjectSettingsPage() {
   const { id } = useParams();
@@ -46,6 +68,11 @@ const [
 
 const [saving, setSaving] =
   useState(false);
+
+const [
+  notificationPreferences,
+  setNotificationPreferences,
+] = useState(defaultNotificationPreferences);
 
   const [copied, setCopied] =
     useState(false);
@@ -72,6 +99,11 @@ setName(projectData.name);
 setDescription(
   projectData.description || ""
 );
+
+setNotificationPreferences({
+  ...defaultNotificationPreferences,
+  ...(projectData.notificationPreferences || {}),
+});
         } catch (error) {
           console.error(error);
 
@@ -188,6 +220,7 @@ setDescription(
         console.log("Submitting:", {
   name,
   description,
+  notificationPreferences,
 });
       setSaving(true);
 
@@ -197,6 +230,7 @@ setDescription(
           {
             name,
             description,
+            notificationPreferences,
           },
         );
 
@@ -226,7 +260,20 @@ setDescription(
 
   const hasChanges =
   name !== project.name ||
-  description !== (project.description || "");
+  description !== (project.description || "") ||
+  JSON.stringify(notificationPreferences) !==
+    JSON.stringify({
+      ...defaultNotificationPreferences,
+      ...(project.notificationPreferences || {}),
+    });
+
+  const handleNotificationChange =
+    (key) => {
+      setNotificationPreferences((prev) => ({
+        ...prev,
+        [key]: !prev[key],
+      }));
+    };
 
   return (
     <div className="space-y-6">
@@ -383,6 +430,78 @@ setDescription(
     </button>
   </div>
 </Card>
+
+      {/* Notification Preferences */}
+
+      <Card>
+        <div
+          className="
+          flex
+          items-center
+          gap-3
+          mb-5
+          "
+        >
+          <Bell
+            size={20}
+            className="text-orange-400"
+          />
+
+          <h2
+            className="
+            text-xl
+            font-semibold
+            text-white
+            "
+          >
+            Notification Preferences
+          </h2>
+        </div>
+
+        <div
+          className="
+          grid
+          gap-3
+          md:grid-cols-2
+          "
+        >
+          {notificationOptions.map(([key, label]) => (
+            <label
+              key={key}
+              className="
+              flex
+              items-center
+              justify-between
+              gap-4
+              rounded-xl
+              border
+              border-slate-800
+              bg-slate-950
+              px-4
+              py-3
+              text-slate-300
+              "
+            >
+              <span>{label}</span>
+
+              <input
+                type="checkbox"
+                checked={Boolean(
+                  notificationPreferences[key]
+                )}
+                onChange={() =>
+                  handleNotificationChange(key)
+                }
+                className="
+                h-5
+                w-5
+                accent-orange-500
+                "
+              />
+            </label>
+          ))}
+        </div>
+      </Card>
 
       {/* API Key */}
 

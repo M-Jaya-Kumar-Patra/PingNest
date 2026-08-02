@@ -64,12 +64,26 @@ export const regenerateApiKey = async (projectId, ownerId) => {
 };
 
 export const updateProject = async (projectId, ownerId, updateData) => {
+  const update = {
+    ...updateData,
+  };
+
+  if (updateData.notificationPreferences) {
+    delete update.notificationPreferences;
+
+    Object.entries(updateData.notificationPreferences).forEach(([key, value]) => {
+      update[`notificationPreferences.${key}`] = value;
+    });
+  }
+
   const project = await Project.findOneAndUpdate(
     {
       _id: projectId,
       owner: ownerId,
     },
-    updateData,
+    {
+      $set: update,
+    },
     {
       new: true,
     },
