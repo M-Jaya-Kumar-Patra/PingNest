@@ -397,6 +397,21 @@ app.use(
                   )}
                 />
 
+                <div className="text-right">
+                  <Link
+                    href="/forgot-password"
+                    className="
+                    text-sm
+                    text-orange-400
+                    font-medium
+                    hover:text-orange-300
+                    transition-colors
+                    "
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+
                 <Button
                   type="submit"
                   disabled={loading}

@@ -8,9 +8,15 @@ import {
   regenerateApiKey,
   updateProject,
 } from "../services/project.service.js";
+import {
+  sendApiKeyRegeneratedEmail,
+  sendProjectCreatedEmail,
+} from "../services/mail.service.js";
 
 export const createProjectController = asyncHandler(async (req, res) => {
   const project = await createProject(req.user._id, req.validatedData);
+
+  await sendProjectCreatedEmail(req.user.email, project);
 
   return res
     .status(201)
@@ -43,6 +49,8 @@ export const deleteProjectController = asyncHandler(async (req, res) => {
 
 export const regenerateApiKeyController = asyncHandler(async (req, res) => {
   const project = await regenerateApiKey(req.params.id, req.user._id);
+
+  await sendApiKeyRegeneratedEmail(req.user.email, project);
 
   return res
     .status(200)

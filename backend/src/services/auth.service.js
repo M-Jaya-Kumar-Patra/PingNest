@@ -2,7 +2,11 @@ import User from "../models/user.model.js";
 import ApiError from "../utils/ApiError.js";
 import generateTokens from "../utils/generateTokens.js";
 import generateOtp from "../utils/generateOtp.js";
-import { sendOtpEmail } from "./mail.service.js";
+import {
+  sendForgotPasswordOtp,
+  sendPasswordChangedEmail,
+  sendVerificationOtp,
+} from "./mail.service.js";
 
 export const registerUser = async (userData) => {
   const { name, email, password } = userData;
@@ -17,8 +21,6 @@ export const registerUser = async (userData) => {
 
   const otp = generateOtp();
 
-await sendOtpEmail(email, otp);
-
 const user = await User.create({
   name,
   email,
@@ -27,6 +29,8 @@ const user = await User.create({
   verificationOtp: otp,
   verificationOtpExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
 });
+
+  await sendVerificationOtp(email, otp, name);
 
   const safeUser = await User.findById(user._id).select(
     "-password -refreshToken -verificationOtp",
@@ -101,7 +105,7 @@ export const resendVerificationOtp = async (email) => {
 
   await user.save();
 
-  await sendOtpEmail(email, otp);
+  await sendVerificationOtp(email, otp, user.name);
 
   return true;
 };
@@ -123,7 +127,27 @@ export const forgotPassword = async (email) => {
 
   await user.save();
 
-  await sendOtpEmail(email, otp);
+  await sendForgotPasswordOtp(email, otp);
+
+  return true;
+};
+
+export const verifyPasswordResetOtp = async (email, otp) => {
+  const user = await User.findOne({
+    email,
+  });
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  if (user.passwordResetOtp !== otp) {
+    throw new ApiError(400, "Invalid OTP");
+  }
+
+  if (user.passwordResetOtpExpiresAt < new Date()) {
+    throw new ApiError(400, "OTP expired");
+  }
 
   return true;
 };
@@ -153,6 +177,8 @@ export const resetPassword = async (email, otp, password) => {
 
   await user.save();
 
+  await sendPasswordChangedEmail(email);
+
   return true;
 };
 
@@ -174,6 +200,8 @@ export const changeUserPassword = async (
   user.refreshToken = null;
 
   await user.save();
+
+  await sendPasswordChangedEmail(user.email);
 
   return true;
 };

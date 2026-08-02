@@ -32,6 +32,9 @@ export default function ResetPasswordPage() {
   const email =
     searchParams.get("email");
 
+  const verifiedOtp =
+    searchParams.get("otp");
+
   const [otp, setOtp] =
     useState("");
 
@@ -64,7 +67,7 @@ export default function ResetPasswordPage() {
 
       await resetPassword({
         email,
-        otp,
+        otp: verifiedOtp || otp,
         password,
       });
 
@@ -226,74 +229,77 @@ export default function ResetPasswordPage() {
               onSubmit={handleSubmit}
               className="space-y-5"
             >
-              <div>
-                <label
-                  className="
-                  block
-                  text-sm
-                  font-medium
-
-                  text-white
-
-                  mb-2
-                  "
-                >
-                  OTP Code
-                </label>
-
-                <div className="relative">
-                  <KeyRound
-                    size={18}
+              {!verifiedOtp && (
+                <div>
+                  <label
                     className="
-                    absolute
-                    left-4
-                    top-1/2
-                    -translate-y-1/2
-
-                    text-slate-500
-                    "
-                  />
-
-                  <input
-                    value={otp}
-                    onChange={(e) =>
-                      setOtp(
-                        e.target.value
-                      )
-                    }
-                    maxLength={6}
-                    placeholder="000000"
-                    className="
-                    w-full
-
-                    rounded-xl
-
-                    border
-                    border-slate-700
-
-                    bg-slate-950
-
-                    pl-12
-                    pr-4
-                    py-3
-
-                    text-center
-
-                    tracking-[6px]
+                    block
+                    text-sm
+                    font-medium
 
                     text-white
 
-                    outline-none
-
-                    transition-all
-
-                    focus:border-orange-500
-                    focus:ring-2
-                    focus:ring-orange-500/20
+                    mb-2
                     "
-                  />
+                  >
+                    OTP Code
+                  </label>
+
+                  <div className="relative">
+                    <KeyRound
+                      size={18}
+                      className="
+                      absolute
+                      left-4
+                      top-1/2
+                      -translate-y-1/2
+
+                      text-slate-500
+                      "
+                    />
+
+                    <input
+                      value={otp}
+                      onChange={(e) =>
+                        setOtp(
+                          e.target.value
+                        )
+                      }
+                      maxLength={6}
+                      required
+                      placeholder="000000"
+                      className="
+                      w-full
+
+                      rounded-xl
+
+                      border
+                      border-slate-700
+
+                      bg-slate-950
+
+                      pl-12
+                      pr-4
+                      py-3
+
+                      text-center
+
+                      tracking-[6px]
+
+                      text-white
+
+                      outline-none
+
+                      transition-all
+
+                      focus:border-orange-500
+                      focus:ring-2
+                      focus:ring-orange-500/20
+                      "
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               <PasswordInput
                 label="New Password"

@@ -1,27 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import {
-  Mail,
-  ShieldAlert,
+  useSearchParams,
+  useRouter,
+} from "next/navigation";
+
+import {
+  KeyRound,
   Loader2,
-  ArrowRight,
+  ShieldCheck,
 } from "lucide-react";
 
 import Button from "@/components/ui/Button";
 
 import {
-  forgotPassword,
+  verifyResetOtp,
 } from "@/services/auth.service";
 
 import toast from "react-hot-toast";
 
-export default function ForgotPasswordPage() {
+export default function VerifyResetOtpPage() {
   const router = useRouter();
 
-  const [email, setEmail] =
+  const searchParams =
+    useSearchParams();
+
+  const email =
+    searchParams.get("email");
+
+  const [otp, setOtp] =
     useState("");
 
   const [loading, setLoading] =
@@ -33,22 +42,23 @@ export default function ForgotPasswordPage() {
     try {
       setLoading(true);
 
-      await forgotPassword({
+      await verifyResetOtp({
         email,
+        otp,
       });
 
       toast.success(
-        "OTP sent successfully"
+        "OTP verified successfully"
       );
 
       router.push(
-        `/verify-reset-otp?email=${encodeURIComponent(email)}`
+        `/reset-password?email=${encodeURIComponent(email)}&otp=${encodeURIComponent(otp)}`
       );
     } catch (error) {
       toast.error(
         error?.response?.data
           ?.message ||
-          "Failed to send OTP"
+          "Invalid or expired OTP"
       );
     } finally {
       setLoading(false);
@@ -60,34 +70,25 @@ export default function ForgotPasswordPage() {
       className="
       min-h-screen
       bg-slate-950
-
       relative
       overflow-hidden
-
       flex
       items-center
       justify-center
-
       px-4
       py-8
       "
     >
-      {/* Background Glow */}
-
       <div
         className="
         absolute
         top-0
         left-1/2
         -translate-x-1/2
-
         h-[500px]
         w-[500px]
-
         rounded-full
-
         bg-orange-500/10
-
         blur-[120px]
         "
       />
@@ -96,7 +97,6 @@ export default function ForgotPasswordPage() {
         className="
         relative
         z-10
-
         w-full
         max-w-md
         "
@@ -104,20 +104,14 @@ export default function ForgotPasswordPage() {
         <div
           className="
           rounded-3xl
-
           border
           border-slate-800
-
           bg-slate-900/80
           backdrop-blur-xl
-
           shadow-2xl
-
           overflow-hidden
           "
         >
-          {/* Header */}
-
           <div className="p-8">
             <div
               className="
@@ -130,24 +124,18 @@ export default function ForgotPasswordPage() {
                 className="
                 h-16
                 w-16
-
                 rounded-2xl
-
                 bg-orange-500/10
-
                 border
                 border-orange-500/20
-
                 flex
                 items-center
                 justify-center
                 "
               >
-                <ShieldAlert
+                <ShieldCheck
                   size={30}
-                  className="
-                  text-orange-400
-                  "
+                  className="text-orange-400"
                 />
               </div>
             </div>
@@ -156,12 +144,11 @@ export default function ForgotPasswordPage() {
               className="
               text-3xl
               font-bold
-
               text-center
               text-white
               "
             >
-              Forgot Password
+              Verify OTP
             </h1>
 
             <p
@@ -171,13 +158,24 @@ export default function ForgotPasswordPage() {
               mt-3
               "
             >
-              Enter your email address
-              and we'll send a
-              verification code.
+              Enter the reset code sent
+              to your email.
             </p>
-          </div>
 
-          {/* Form */}
+            {email && (
+              <p
+                className="
+                text-center
+                text-orange-400
+                text-sm
+                mt-4
+                break-all
+                "
+              >
+                {email}
+              </p>
+            )}
+          </div>
 
           <div className="px-8 pb-8">
             <form
@@ -190,59 +188,49 @@ export default function ForgotPasswordPage() {
                   block
                   text-sm
                   font-medium
-
                   text-white
-
                   mb-2
                   "
                 >
-                  Email Address
+                  OTP Code
                 </label>
 
                 <div className="relative">
-                  <Mail
+                  <KeyRound
                     size={18}
                     className="
                     absolute
                     left-4
                     top-1/2
                     -translate-y-1/2
-
                     text-slate-500
                     "
                   />
 
                   <input
-                    type="email"
-                    value={email}
+                    value={otp}
                     onChange={(e) =>
-                      setEmail(
+                      setOtp(
                         e.target.value
                       )
                     }
-                    placeholder="you@example.com"
+                    maxLength={6}
                     required
+                    placeholder="000000"
                     className="
                     w-full
-
                     rounded-xl
-
                     border
                     border-slate-700
-
                     bg-slate-950
-
                     pl-12
                     pr-4
                     py-3
-
+                    text-center
+                    tracking-[6px]
                     text-white
-                    placeholder:text-slate-500
-
                     outline-none
-
                     transition-all
-
                     focus:border-orange-500
                     focus:ring-2
                     focus:ring-orange-500/20
@@ -269,44 +257,15 @@ export default function ForgotPasswordPage() {
                   >
                     <Loader2
                       size={18}
-                      className="
-                      animate-spin
-                      "
+                      className="animate-spin"
                     />
-                    Sending OTP...
+                    Verifying...
                   </div>
                 ) : (
-                  <div
-                    className="
-                    flex
-                    items-center
-                    justify-center
-                    gap-2
-                    "
-                  >
-                    Send OTP
-                    <ArrowRight
-                      size={18}
-                    />
-                  </div>
+                  "Verify OTP"
                 )}
               </Button>
             </form>
-
-            <p
-              className="
-              mt-6
-
-              text-center
-
-              text-xs
-              text-slate-500
-              "
-            >
-              We'll send a secure
-              verification code to
-              your registered email.
-            </p>
           </div>
         </div>
       </div>
